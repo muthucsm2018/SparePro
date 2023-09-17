@@ -1,0 +1,379 @@
+﻿
+@using SparePro.Repository.Resource;
+
+@{
+    Layout = "";
+}
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+
+    <script>
+        var GrdItem, ItemStatus = -1;
+
+        ShowCommonBack();
+
+        $('body').on('click', function (e) {
+            if ($(e.target).data('toggle') !== 'popover' && $(e.target).parents('.popover.in').length === 0) {
+                $('.popover').popover('hide');
+            }
+        });
+
+        document.onkeydown = function (evt) {
+            var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
+            if (keyCode == 13) {
+                SubCategorySearch();
+                return false;
+            }
+        }
+
+        function LoadBrand() {
+            $.ajax({
+                type: "GET",
+                url: BaseURL + "Common/Load_Brand",
+                datatype: "Json",
+                success: function (data) {
+                    $("#DdlBrand option").remove();
+                    $.each(data, function (index, value) {
+                        $('#DdlBrand').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            }).done(function (result) {
+                console.log(2);
+            });
+        }
+
+        LoadBrand();
+
+        $.ajax({
+            type: "GET",
+            url: BaseURL + "Common/Load_Part",
+            datatype: "Json",
+            success: function (data) {
+                $("#DdlPart option").remove();
+                $.each(data, function (index, value) {
+                    $('#DdlPart').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        }).done(function (result) {
+
+        });
+
+
+        $.ajax({
+            type: "GET",
+            url: BaseURL + "Common/Load_Status",
+            datatype: "Json",
+            success: function (data) {
+                $("#DdlItemStatus option").remove();
+                $.each(data, function (index, value) {
+                    $('#DdlItemStatus').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        }).done(function (result) {
+            if (ItemStatus == 0 || ItemStatus == 1) {
+                $("#DdlItemStatus").val(ItemStatus);
+            }
+            else {
+                $("#DdlItemStatus").val(-1);
+            }
+        });
+
+        renderer = function (value, record, $cell, $displayEl, id) {
+
+            var HTMLContent = '<table style=width:100%><tr>';
+                HTMLContent += '<td style="border:0px solid #FFF;"><a tabindex="-1" onclick="EditItem(' + id + ')" style="cursor:pointer"><i class="fas fa-edit Form-GridEditButton"></i></a></td>';
+                HTMLContent += '<td style="border:0px solid #FFF;"><a tabindex="-1" onclick="DeleteItem(' + id + ')" style="cursor:pointer"><i class="far fa-trash-alt Form-GridDeleteButton"></i></a></td>';
+            $displayEl.html("</tr></table>");
+            $displayEl.append(HTMLContent);
+
+        }
+
+        GrdItem = $("#GrdItem").grid({
+            primaryKey: "ItemID",
+            uiLibrary: "bootstrap4",
+            autoLoad: true,
+            dataSource: '@Url.Action("ItemMaster_FindAll", "ProjectMaster")',
+            columns: [
+                { field: "BrandName", width: 40, title: "Brand Name", sortable: true, align: "left" },
+                { field: "PartName", width: 40, title: "Part Name", sortable: true, align: "left" },
+                { field: "ItemName", width: 70, title: "Item Name", sortable: true, align: "left" },
+                { field: "ItemPrice", width: 35, title: "Item Price", sortable: true, align: "left" },
+                { field: "Quantity", width: 25, title: "Qty", sortable: true, align: "left" },
+                { field: "SortOrder", width:30,title: "Sort Order", sortable: true, align: "right" },
+            {
+                    field: '@PROPageModel.Common_Status', width: 35, align: "center", editor: false, sortable: true, renderer: function (value, record) {
+
+
+                        return record.Status == true ?'<span class="badge badge-success" style=font-size:12px>@Button.Button_Active</span>' : '<span class="badge badge-danger" style=font-size:12px>@Button.Button_Inactive</span>';
+                    }
+                },
+                { field: '@Button.Button_Action', width: 40, align: "center", renderer: renderer }
+
+        ],
+            pager: { enable: true, limit: GridRowsDisplayLimit, sizes: ArrPaging }
+        });
+
+
+        function EditItem(ItemID) {
+            var ParamData = [
+
+                { ParameterName: "BrandID", ParameterValue: $("#DdlBrand").val() },
+                { ParameterName: "PartID", ParameterValue: $("#DdlPart").val() },
+                { ParameterName: "ItemName", ParameterValue: $("#TxtSearchItemName").val() }
+            ]
+
+            AddBackURLStore(JSON.stringify(ParamData));
+
+            if ($("#HdnDashboardCount").val() == 1) {
+                GetMenu('@Url.Action("AddItemMaster", "ProjectMaster")' + '?ItemID=' + ItemID);
+            }
+            else {
+                GetMenu('@Url.Action("AddItemMaster", "ProjectMaster")' + '?ItemID=' + ItemID + '&HeaderViewID=' + GetParamValue("HeaderViewID") + '&DetailViewID=' + GetParamValue("DetailViewID"));
+            }
+
+        }
+
+        $('#btnAddItem').click(function () {
+
+            var ParamData = [
+                { ParameterName: "BrandID", ParameterValue: $("#DdlBrand").val() },
+                { ParameterName: "PartID", ParameterValue: $("#DdlPart").val() },
+                { ParameterName: "ItemName", ParameterValue: $("#TxtSearchItemName").val() }
+            ]
+
+            AddBackURLStore(JSON.stringify(ParamData));
+            if ($("#HdnDashboardCount").val() == 1) {
+                GetMenu('@Url.Action("AddItemMaster", "ProjectMaster")' + '?ItemID=0');
+            }
+            else {
+                GetMenu('@Url.Action("AddItemMaster", "ProjectMaster")' + '?ItemID=0' + '&HeaderViewID=' + GetParamValue("HeaderViewID") + '&DetailViewID=' + GetParamValue("DetailViewID"));
+            }
+        });
+
+
+        function DeleteItem(ItemID) {
+                $.confirm({
+                    title: ConfirmAlert_SuccessMessage,
+                    content: ConfirmAlert_Message_Content.replace("{0}", ConfirmAlert_InactivateMessage_Content),
+                    animation: 'zoom',
+                    closeAnimation: 'zoom',
+                    buttons: {
+                        'confirm': {
+                            text: Alert_YesMessage,
+                            btnClass: Alert_Button_Style,
+                            action: function () {
+                                $.ajax({ url: BaseURL + "ProjectMaster/ItemMaster_Delete", type: "POST", data: { ItemID: ItemID } })
+                                    .done(function (result) {
+                                        if (result.Result == true) {
+                                            GrdItem.reload();
+                                            SucessAlert(result.Message);
+                                        }
+                                        else {
+                                            ErrorAlert(result.Message);
+                                        }
+                                    })
+                                    .fail(function (result) {
+                                        ErrorAlert(result.Message);
+                                    });
+                            }
+                        },
+                        cancel: {
+                            text: Alert_NoMessage,
+                            btnClass: Alert_Button_Style
+                        }
+                    }
+                });
+            }
+
+        function ItemSearch() {
+            var searchBrand = '';
+            var searchPart='';
+            var SearchItemName = '';
+            var SearchItemStatus = '';
+
+            if ($("#DdlBrand").val() != "") {
+                searchBrand = $('#DdlBrand').val();
+            }
+
+            if ($("#DdlPart").val() != 0) {
+                searchPart = $('#DdlPart').val();
+            }
+
+            if ($("#TxtSearchItemName").val() != "") {
+                SearchItemName = $('#TxtSearchItemName').val();
+            }
+
+            if ($("#DdlItemStatus").val() == 0) {
+                SearchItemStatus = false;
+            }
+            else if ($("#DdlItemStatus").val() == 1) {
+                SearchItemStatus = true;
+            }
+
+            GrdItem.clear();
+            GrdItem.reload({ BrandID: searchBrand, PartID: searchPart, Item: SearchItemName, Status: SearchItemStatus });
+
+        }
+
+
+        //Search filter methods
+        $('#btnItemSearch').click(function () {
+            ItemSearch();
+        });
+
+        $('#btnItemSearchClear').click(function () {
+            $("#DdlBrand").val("");
+            $("#DdlPart").val(0);
+            $("#TxtSearchItemName").val("");
+            $("#DdlItemStatus").val(-1);
+
+            GrdItem.reload({ BrandID: 0, PartID: 0, Item: '', Status: true });
+        });
+
+    </script>
+    <script type="text/javascript">
+        var BrandID;
+        var PartID;
+       
+        if (ArrParameterData[GetBackURLCount()] != null) {
+            if (ArrParameterData[GetBackURLCount()][0].ParameterName == "BrandID") {
+
+                BrandID = ArrParameterData[0][0].ParameterValue;
+                $('#DdlBrand').val(BrandID);
+                //document.getElementById('DdlBrand').value = BrandID;                
+                //console.log(document.getElementById('DdlBrand').value);
+            }
+            if (ArrParameterData[GetBackURLCount()][1].ParameterName == "PartID") {
+                PartID = ArrParameterData[0][1].ParameterValue;
+                $('#DdlPart').val(PartID);
+            }
+            if (ArrParameterData[GetBackURLCount()][2].ParameterName == "ItemName") {
+                $('#TxtSearchItemName').val(ArrParameterData[0][2].ParameterValue);
+            }
+            //if (ArrParameterData[GetBackURLCount()][3].ParameterName == "ItemStatus") {
+            //    ItemStatus = ArrParameterData[0][3].ParameterValue;
+            //    $('#DdlItemStatus').val(ItemStatus);
+            //    if (ItemStatus == 0) {
+            //        CateStatus = false;
+            //    }
+            //    else if (Sub_SubCategoryStatus == 1) {
+            //        CateStatus = true;
+            //    }
+            //}
+            GrdItem.reload({ BrandID: BrandID, PartID: PartID, Item: $('#TxtSearchItemName').val(), Status: 1 });
+            var ParamData = [
+
+                { ParameterName: "BrandID", ParameterValue: BrandID },
+                { ParameterName: "PartID", ParameterValue: PartID },
+                { ParameterName: "ItemName", ParameterValue: $("#TxtSearchItemName").val() }
+            ]
+
+            AddBackURLStore(JSON.stringify(ParamData));
+        }
+
+
+    </script>
+</head>
+<body>
+    <input type="hidden" id="HtnItemUniqID" value="0" />
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content">
+        <!-- Content Header (Page header) -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-pd">
+
+                        <div class="card-header">
+                            <span style="font-size: 18px;" class="m-0"><i class="fas fa-box"></i></span>
+                            <span style="font-size: 18px; border-left: 1px solid #ccc; padding-left: 10px;"> Item Master </span>
+                            <div style="float: right;">
+                                <span style="border-left: 1px solid #ccc; padding-left: 15px; padding-right: 15px;">
+                                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="Add Sub Category" id="btnAddItem"><i class="fas fa-plus-circle"></i> </a>
+                                </span>
+                                <span style="border-left: 1px solid #ccc; padding-left: 15px; padding-right: 15px;">
+                                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="Show Form" onclick="showForm()"><i class="fas fa-caret-square-down"></i></a>
+                                </span><span style="border-left: 1px solid #ccc; padding-left: 15px; padding-right: 15px;">
+                                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="Hide Form" onclick="hideForm()"><i class="fas fa-caret-square-up"></i></a>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div id="hidden-form" >
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Brand Name</label>
+                                            <div>
+                                                @Html.DropDownList("DdlBrand", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 1, @width = "100%" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group required">
+                                        <label class="control-label">Part Name</label>
+                                        @Html.DropDownList("DdlPart", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 1, @width = "100%" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Item Name</label>
+                                            <div>
+                                                <input type="text" tabindex="2" id="TxtSearchItemName" maxlength="200" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>@PROPageModel.Common_Status</label>
+                                            <div>
+                                                @Html.DropDownList("DdlItemStatus", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 3, @width = "100%" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="pdt-25">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnItemSearch" class="btn btn-primary btn-block"><i class="fa fa-search"></i> @SparePro.Repository.WEBPAGEBUTTON.SEARCH</button>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnItemClear" class="btn btn-primary btn-block"><i class="fa fa-paint-brush"></i> @SparePro.Repository.WEBPAGEBUTTON.CLEAR</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="box-body table-responsive no-padding">
+                                        <table id="GrdItem" class="table table-hover"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+
+                 </div>
+        
+
+            </div><!-- /.content-wrapper -->
+        </div>
+    </div>
+
+    
+
+</body>
+</html>
+
+
+
+
+

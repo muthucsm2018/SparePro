@@ -1,0 +1,381 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="SpareProModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="SpareProEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="TblBrandMasters" EntityType="SpareProModel.TblBrandMaster" />
+    <EntitySet Name="TblDefaultMasterDetails" EntityType="SpareProModel.TblDefaultMasterDetail" />
+    <EntitySet Name="TblDefaultMasterHeaders" EntityType="SpareProModel.TblDefaultMasterHeader" />
+    <EntitySet Name="TblHomePages" EntityType="SpareProModel.TblHomePage" />
+    <EntitySet Name="TblMenuMasterDetails" EntityType="SpareProModel.TblMenuMasterDetail" />
+    <EntitySet Name="TblMenuMasterHeaders" EntityType="SpareProModel.TblMenuMasterHeader" />
+    <EntitySet Name="TblRoleMasters" EntityType="SpareProModel.TblRoleMaster" />
+    <EntitySet Name="TblUserMasters" EntityType="SpareProModel.TblUserMaster" />
+    <EntitySet Name="TblMenuRoleMatrixAccesses" EntityType="SpareProModel.TblMenuRoleMatrixAccess" />
+    <EntitySet Name="TblItemMasters" EntityType="SpareProModel.TblItemMaster" />
+    <EntitySet Name="TblPartMasters" EntityType="SpareProModel.TblPartMaster" />
+    <EntitySet Name="TblPaymentDetails" EntityType="SpareProModel.TblPaymentDetail" />
+    <EntitySet Name="TblStocks" EntityType="SpareProModel.TblStock" />
+    <EntitySet Name="TblPurchaseDetails" EntityType="SpareProModel.TblPurchaseDetail" />
+    <EntitySet Name="TblPurchases" EntityType="SpareProModel.TblPurchas" />
+    <EntitySet Name="TblOrderDetails" EntityType="SpareProModel.TblOrderDetail" />
+    <EntitySet Name="TblOrders" EntityType="SpareProModel.TblOrder" />
+    <FunctionImport Name="sp_frm_get_Stock_Report" ReturnType="Collection(SpareProModel.sp_frm_get_Stock_Report_Result)">
+      <Parameter Name="BrandID" Mode="In" Type="Int64" />
+      <Parameter Name="PartID" Mode="In" Type="Int64" />
+      <Parameter Name="ItemID" Mode="In" Type="Int64" />
+    </FunctionImport>
+    <FunctionImport Name="sp_frm_getSales" ReturnType="Collection(SpareProModel.sp_frm_getSales_Result)">
+      <Parameter Name="RequestedBy" Mode="In" Type="Int32" />
+      <Parameter Name="fromDate" Mode="In" Type="DateTime" />
+      <Parameter Name="toDate" Mode="In" Type="DateTime" />
+    </FunctionImport>
+    <FunctionImport Name="sp_frm_get_Order_Report" ReturnType="Collection(SpareProModel.sp_frm_get_Order_Report_Result)">
+      <Parameter Name="RequestedBy" Mode="In" Type="Int32" />
+      <Parameter Name="fromDate" Mode="In" Type="DateTime" />
+      <Parameter Name="toDate" Mode="In" Type="DateTime" />
+    </FunctionImport>
+    <FunctionImport Name="sp_frm_getPurchases" ReturnType="Collection(SpareProModel.sp_frm_getPurchases_Result)">
+      <Parameter Name="RequestedBy" Mode="In" Type="Int32" />
+      <Parameter Name="CreatedDate" Mode="In" Type="DateTime" />
+      <Parameter Name="ItemName" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="sp_frm_get_Payment_Report" ReturnType="Collection(SpareProModel.sp_frm_get_Payment_Report_Result)">
+      <Parameter Name="RequestedBy" Mode="In" Type="Int32" />
+      <Parameter Name="fromDate" Mode="In" Type="DateTime" />
+      <Parameter Name="toDate" Mode="In" Type="DateTime" />
+    </FunctionImport>
+    <FunctionImport Name="sp_frm_get_Monthly_Sales_Report" ReturnType="Collection(SpareProModel.sp_frm_get_Monthly_Sales_Report_Result)">
+      <Parameter Name="RequestedBy" Mode="In" Type="Int32" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+      <Parameter Name="Month" Mode="In" Type="String" />
+    </FunctionImport>
+    <EntitySet Name="TblAccPaymentDetails" EntityType="SpareProModel.TblAccPaymentDetail" />
+  </EntityContainer>
+  <EntityType Name="TblBrandMaster">
+    <Key>
+      <PropertyRef Name="BrandID" />
+    </Key>
+    <Property Name="BrandID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="BrandName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="BrandImage" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="SortOrder" Type="Int32" />
+    <Property Name="Status" Type="Boolean" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="TblDefaultMasterDetail">
+    <Key>
+      <PropertyRef Name="DefaultDetailID" />
+    </Key>
+    <Property Name="DefaultDetailID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="DefaultHeaderID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="DefaultTextField" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="DefaultValueField" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="Image" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="DefaultOrder" Type="Int32" />
+    <Property Name="IsSearch" Type="Boolean" />
+    <Property Name="IsPage" Type="Boolean" />
+    <Property Name="Status" Type="Boolean" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="TblDefaultMasterHeader">
+    <Key>
+      <PropertyRef Name="DefaultHeaderID" />
+    </Key>
+    <Property Name="DefaultHeaderID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="DefaultHeaderName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="IsTextValue" Type="Boolean" />
+    <Property Name="SystemType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="IsImage" Type="Boolean" />
+    <Property Name="DefaultOrder" Type="Int32" />
+    <Property Name="Status" Type="Boolean" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="TblHomePage">
+    <Key>
+      <PropertyRef Name="HomePageViewID" />
+    </Key>
+    <Property Name="HomePageViewID" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="HomePageName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="ControllerName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="ActionName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Status" Type="Boolean" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="TblMenuMasterDetail">
+    <Key>
+      <PropertyRef Name="DetailViewID" />
+    </Key>
+    <Property Name="DetailViewID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="HeaderViewID" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="MenuName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="PageUrl" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="IconCls" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Disabled" Type="Boolean" />
+    <Property Name="OrderByTab" Type="Int32" />
+    <Property Name="IsPageAccess" Type="Boolean" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="TblMenuMasterHeader">
+    <Key>
+      <PropertyRef Name="HeaderViewID" />
+    </Key>
+    <Property Name="HeaderViewID" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="MenuName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Disabled" Type="Boolean" />
+    <Property Name="OrderByTab" Type="Int32" />
+    <Property Name="IconCls" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="TblRoleMaster">
+    <Key>
+      <PropertyRef Name="RoleID" />
+    </Key>
+    <Property Name="RoleID" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="RoleName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="HomePageViewID" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="IsPOS" Type="Boolean" />
+    <Property Name="status" Type="Boolean" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="TblUserMaster">
+    <Key>
+      <PropertyRef Name="UserID" />
+    </Key>
+    <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="LoginName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="LastName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="EmailID" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="PasswordAttemptCount" Type="Int32" Nullable="false" />
+    <Property Name="RoleID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Status" Type="Boolean" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="TblMenuRoleMatrixAccess">
+    <Key>
+      <PropertyRef Name="RoleMatrixAccessID" />
+    </Key>
+    <Property Name="RoleMatrixAccessID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="RoleID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="HeaderViewID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="DetailViewID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="DisplayOrder" Type="Int32" />
+    <Property Name="IsPageAccess" Type="Boolean" />
+    <Property Name="Status" Type="Boolean" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="TblItemMaster">
+    <Key>
+      <PropertyRef Name="ItemID" />
+    </Key>
+    <Property Name="ItemID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="BrandID" Type="Int64" Nullable="false" />
+    <Property Name="PartID" Type="Int64" Nullable="false" />
+    <Property Name="ItemName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="ItemPrice" Type="Decimal" Precision="18" Scale="3" />
+    <Property Name="InStock" Type="Boolean" />
+    <Property Name="SortOrder" Type="Int32" />
+    <Property Name="Status" Type="Boolean" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="TblPartMaster">
+    <Key>
+      <PropertyRef Name="PartID" />
+    </Key>
+    <Property Name="PartID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PartName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="SortOrder" Type="Int32" />
+    <Property Name="Status" Type="Boolean" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="TblPaymentDetail">
+    <Key>
+      <PropertyRef Name="PurchasePaymentID" />
+    </Key>
+    <Property Name="PurchasePaymentID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PurchaseID" Type="Int64" Nullable="false" />
+    <Property Name="PaymentDate" Type="DateTime" Precision="3" />
+    <Property Name="PaymentBy" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="PaymentAmount" Type="Double" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+    <Property Name="PaymentStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="TblStock">
+    <Key>
+      <PropertyRef Name="StockID" />
+    </Key>
+    <Property Name="StockID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="BrandID" Type="Int64" Nullable="false" />
+    <Property Name="PartID" Type="Int64" Nullable="false" />
+    <Property Name="ItemID" Type="Int64" Nullable="false" />
+    <Property Name="OrderedQty" Type="Double" />
+    <Property Name="SoldQty" Type="Double" />
+  </EntityType>
+  <EntityType Name="TblPurchaseDetail">
+    <Key>
+      <PropertyRef Name="PurchaseDetailID" />
+    </Key>
+    <Property Name="PurchaseDetailID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PurchaseID" Type="Int64" Nullable="false" />
+    <Property Name="BrandID" Type="Int64" Nullable="false" />
+    <Property Name="PartID" Type="Int64" Nullable="false" />
+    <Property Name="ItemID" Type="Int64" Nullable="false" />
+    <Property Name="Color" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Qty" Type="Double" />
+    <Property Name="ItemPrice" Type="Decimal" Precision="25" Scale="4" />
+    <Property Name="TotalAmount" Type="Decimal" Precision="25" Scale="4" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="TblPurchas">
+    <Key>
+      <PropertyRef Name="PurchaseID" />
+    </Key>
+    <Property Name="PurchaseID" Type="Int64" Nullable="false" />
+    <Property Name="PurchaseDate" Type="DateTime" Precision="3" />
+    <Property Name="PurchaseStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="PaymentStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="TotalAmount" Type="Decimal" Precision="25" Scale="4" />
+    <Property Name="RequestedBy" Type="Int32" />
+    <Property Name="Note" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="Status" Type="Boolean" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="TblOrderDetail">
+    <Key>
+      <PropertyRef Name="OrderDetailID" />
+    </Key>
+    <Property Name="OrderDetailID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="OrderID" Type="Int64" Nullable="false" />
+    <Property Name="BrandID" Type="Int64" Nullable="false" />
+    <Property Name="PartID" Type="Int64" Nullable="false" />
+    <Property Name="ItemID" Type="Int64" Nullable="false" />
+    <Property Name="Qty" Type="Double" />
+    <Property Name="Color" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="ItemPrice" Type="Decimal" Precision="25" Scale="4" />
+    <Property Name="TotalAmount" Type="Decimal" Precision="25" Scale="4" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="TblOrder">
+    <Key>
+      <PropertyRef Name="OrderID" />
+    </Key>
+    <Property Name="OrderID" Type="Int64" Nullable="false" />
+    <Property Name="OrderDate" Type="DateTime" Precision="3" />
+    <Property Name="TotalAmount" Type="Decimal" Precision="25" Scale="4" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="Int32" />
+    <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <ComplexType Name="sp_frm_get_Stock_Report_Result">
+    <Property Type="String" Name="ItemDesc" Nullable="true" MaxLength="300" />
+    <Property Type="Int64" Name="OrderQty" Nullable="true" />
+    <Property Type="Decimal" Name="OrderedCost" Nullable="true" Precision="18" Scale="3" />
+    <Property Type="Decimal" Name="OrderTotal" Nullable="true" Precision="38" Scale="3" />
+    <Property Type="Int64" Name="PurchasedQty" Nullable="true" />
+    <Property Type="Decimal" Name="PurchasedCost" Nullable="true" Precision="18" Scale="3" />
+    <Property Type="Decimal" Name="PurchasedTotal" Nullable="true" Precision="38" Scale="3" />
+    <Property Type="Int64" Name="Stock" Nullable="true" />
+    <Property Type="Decimal" Name="StockTotal" Nullable="true" Precision="38" Scale="3" />
+  </ComplexType>
+  <ComplexType Name="sp_frm_getSales_Result">
+    <Property Type="Int64" Name="PurchaseID" Nullable="false" />
+    <Property Type="DateTime" Name="PurchaseDate" Nullable="true" Precision="23" />
+    <Property Type="String" Name="CreatedDate" Nullable="true" MaxLength="30" />
+    <Property Type="String" Name="PurchaseStatus" Nullable="true" MaxLength="200" />
+    <Property Type="String" Name="PaymentStatus" Nullable="true" MaxLength="200" />
+    <Property Type="String" Name="RequestedBy" Nullable="true" MaxLength="201" />
+    <Property Type="Decimal" Name="TotalAmount" Nullable="true" Precision="25" Scale="4" />
+    <Property Type="Double" Name="PaidAmount" Nullable="true" />
+    <Property Type="Int32" Name="BalanceAmount" Nullable="false" />
+    <Property Type="String" Name="Items" Nullable="true" />
+    <Property Type="String" Name="Parts" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="sp_frm_get_Order_Report_Result">
+    <Property Type="String" Name="CreatedDate" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="RequestedBy" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="TotalAmount" Nullable="true" MaxLength="31" />
+    <Property Type="String" Name="PaymentStatus" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="Items" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="sp_frm_getPurchases_Result">
+    <Property Type="Int64" Name="OrderID" Nullable="false" />
+    <Property Type="String" Name="CreatedDate" Nullable="true" MaxLength="30" />
+    <Property Type="Decimal" Name="TotalAmount" Nullable="true" Precision="25" Scale="4" />
+    <Property Type="String" Name="Brands" Nullable="true" />
+    <Property Type="String" Name="Items" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="sp_frm_get_Payment_Report_Result">
+    <Property Type="String" Name="CreatedDate" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="RequestedBy" Nullable="true" MaxLength="50" />
+    <Property Type="Decimal" Name="TotalAmount" Nullable="true" Precision="25" Scale="2" />
+    <Property Type="Decimal" Name="PaidAmount" Nullable="true" Precision="25" Scale="2" />
+    <Property Type="Decimal" Name="BalanceAmount" Nullable="true" Precision="25" Scale="2" />
+    <Property Type="String" Name="PaymentStatus" Nullable="true" MaxLength="50" />
+  </ComplexType>
+  <ComplexType Name="sp_frm_get_Monthly_Sales_Report_Result">
+    <Property Type="Int32" Name="Year" Nullable="true" />
+    <Property Type="String" Name="Month" Nullable="true" MaxLength="256" />
+    <Property Type="Decimal" Name="TotalAmount" Nullable="true" Precision="18" Scale="2" />
+    <Property Type="Decimal" Name="PaidAmount" Nullable="true" Precision="18" Scale="2" />
+    <Property Type="Decimal" Name="BalanceAmount" Nullable="true" Precision="19" Scale="2" />
+    <Property Type="String" Name="RequestedBy" Nullable="true" MaxLength="256" />
+  </ComplexType>
+  <EntityType Name="TblAccPaymentDetail">
+    <Key>
+      <PropertyRef Name="AccPaymentID" />
+    </Key>
+    <Property Name="AccPaymentID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PaymentDate" Type="DateTime" Precision="3" />
+    <Property Name="PaymentBy" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="PaidBy" Type="Int32" Nullable="false" />
+    <Property Name="PaymentAmount" Type="Double" />
+  </EntityType>
+</Schema>

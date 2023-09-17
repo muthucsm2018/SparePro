@@ -1,0 +1,1120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="SpareProModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="TblAccPaymentDetails">
+          <Key>
+            <PropertyRef Name="AccPaymentID" />
+          </Key>
+          <Property Name="AccPaymentID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PaymentDate" Type="datetime" />
+          <Property Name="PaymentBy" Type="varchar" MaxLength="20" />
+          <Property Name="PaidBy" Type="int" Nullable="false" />
+          <Property Name="PaymentAmount" Type="float" />
+        </EntityType>
+        <EntityType Name="TblBrandMaster">
+          <Key>
+            <PropertyRef Name="BrandID" />
+          </Key>
+          <Property Name="BrandID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BrandName" Type="nvarchar" MaxLength="200" />
+          <Property Name="BrandImage" Type="image" />
+          <Property Name="SortOrder" Type="int" />
+          <Property Name="Status" Type="bit" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TblDefaultMasterDetail">
+          <Key>
+            <PropertyRef Name="DefaultDetailID" />
+          </Key>
+          <Property Name="DefaultDetailID" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DefaultHeaderID" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DefaultTextField" Type="nvarchar" MaxLength="200" />
+          <Property Name="DefaultValueField" Type="nvarchar" MaxLength="200" />
+          <Property Name="Image" Type="image" />
+          <Property Name="DefaultOrder" Type="int" />
+          <Property Name="IsSearch" Type="bit" />
+          <Property Name="IsPage" Type="bit" />
+          <Property Name="Status" Type="bit" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TblDefaultMasterHeader">
+          <Key>
+            <PropertyRef Name="DefaultHeaderID" />
+          </Key>
+          <Property Name="DefaultHeaderID" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DefaultHeaderName" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="IsTextValue" Type="bit" />
+          <Property Name="SystemType" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsImage" Type="bit" />
+          <Property Name="DefaultOrder" Type="int" />
+          <Property Name="Status" Type="bit" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TblHomePage">
+          <Key>
+            <PropertyRef Name="HomePageViewID" />
+          </Key>
+          <Property Name="HomePageViewID" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="HomePageName" Type="varchar" MaxLength="100" />
+          <Property Name="ControllerName" Type="varchar" MaxLength="50" />
+          <Property Name="ActionName" Type="varchar" MaxLength="50" />
+          <Property Name="Status" Type="bit" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TblItemMaster">
+          <Key>
+            <PropertyRef Name="ItemID" />
+          </Key>
+          <Property Name="ItemID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BrandID" Type="bigint" Nullable="false" />
+          <Property Name="PartID" Type="bigint" Nullable="false" />
+          <Property Name="ItemName" Type="nvarchar" MaxLength="200" />
+          <Property Name="ItemPrice" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="InStock" Type="bit" />
+          <Property Name="SortOrder" Type="int" />
+          <Property Name="Status" Type="bit" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TblMenuMasterDetail">
+          <Key>
+            <PropertyRef Name="DetailViewID" />
+          </Key>
+          <Property Name="DetailViewID" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="HeaderViewID" Type="nvarchar" MaxLength="20" />
+          <Property Name="MenuName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PageUrl" Type="nvarchar" MaxLength="100" />
+          <Property Name="IconCls" Type="nvarchar" MaxLength="100" />
+          <Property Name="Disabled" Type="bit" />
+          <Property Name="OrderByTab" Type="int" />
+          <Property Name="IsPageAccess" Type="bit" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TblMenuMasterHeader">
+          <Key>
+            <PropertyRef Name="HeaderViewID" />
+          </Key>
+          <Property Name="HeaderViewID" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="MenuName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Disabled" Type="bit" />
+          <Property Name="OrderByTab" Type="int" />
+          <Property Name="IconCls" Type="nvarchar" MaxLength="200" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TblMenuRoleMatrixAccess">
+          <Key>
+            <PropertyRef Name="RoleMatrixAccessID" />
+          </Key>
+          <Property Name="RoleMatrixAccessID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RoleID" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="HeaderViewID" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DetailViewID" Type="nvarchar" MaxLength="50" />
+          <Property Name="DisplayOrder" Type="int" />
+          <Property Name="IsPageAccess" Type="bit" />
+          <Property Name="Status" Type="bit" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TblOrderDetails">
+          <Key>
+            <PropertyRef Name="OrderDetailID" />
+          </Key>
+          <Property Name="OrderDetailID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrderID" Type="bigint" Nullable="false" />
+          <Property Name="BrandID" Type="bigint" Nullable="false" />
+          <Property Name="PartID" Type="bigint" Nullable="false" />
+          <Property Name="ItemID" Type="bigint" Nullable="false" />
+          <Property Name="Qty" Type="float" />
+          <Property Name="Color" Type="varchar" MaxLength="10" />
+          <Property Name="ItemPrice" Type="decimal" Precision="25" Scale="4" />
+          <Property Name="TotalAmount" Type="decimal" Precision="25" Scale="4" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TblOrders">
+          <Key>
+            <PropertyRef Name="OrderID" />
+          </Key>
+          <Property Name="OrderID" Type="bigint" Nullable="false" />
+          <Property Name="OrderDate" Type="datetime" />
+          <Property Name="TotalAmount" Type="decimal" Precision="25" Scale="4" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TblPartMaster">
+          <Key>
+            <PropertyRef Name="PartID" />
+          </Key>
+          <Property Name="PartID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PartName" Type="nvarchar" MaxLength="200" />
+          <Property Name="SortOrder" Type="int" />
+          <Property Name="Status" Type="bit" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TblPaymentDetails">
+          <Key>
+            <PropertyRef Name="PurchasePaymentID" />
+          </Key>
+          <Property Name="PurchasePaymentID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PurchaseID" Type="bigint" Nullable="false" />
+          <Property Name="PaymentDate" Type="datetime" />
+          <Property Name="PaymentBy" Type="varchar" MaxLength="20" />
+          <Property Name="PaymentStatus" Type="varchar" MaxLength="20" />
+          <Property Name="PaymentAmount" Type="float" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TblPurchaseDetails">
+          <Key>
+            <PropertyRef Name="PurchaseDetailID" />
+          </Key>
+          <Property Name="PurchaseDetailID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PurchaseID" Type="bigint" Nullable="false" />
+          <Property Name="BrandID" Type="bigint" Nullable="false" />
+          <Property Name="PartID" Type="bigint" Nullable="false" />
+          <Property Name="ItemID" Type="bigint" Nullable="false" />
+          <Property Name="Color" Type="varchar" MaxLength="10" />
+          <Property Name="Qty" Type="float" />
+          <Property Name="ItemPrice" Type="decimal" Precision="25" Scale="4" />
+          <Property Name="TotalAmount" Type="decimal" Precision="25" Scale="4" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TblPurchases">
+          <Key>
+            <PropertyRef Name="PurchaseID" />
+          </Key>
+          <Property Name="PurchaseID" Type="bigint" Nullable="false" />
+          <Property Name="PurchaseDate" Type="datetime" />
+          <Property Name="PurchaseStatus" Type="nvarchar" MaxLength="50" />
+          <Property Name="PaymentStatus" Type="nvarchar" MaxLength="50" />
+          <Property Name="TotalAmount" Type="decimal" Precision="25" Scale="4" />
+          <Property Name="RequestedBy" Type="int" />
+          <Property Name="Note" Type="nvarchar" MaxLength="500" />
+          <Property Name="Status" Type="bit" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TblRoleMaster">
+          <Key>
+            <PropertyRef Name="RoleID" />
+          </Key>
+          <Property Name="RoleID" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="RoleName" Type="nvarchar" MaxLength="100" />
+          <Property Name="Description" Type="nvarchar" MaxLength="500" />
+          <Property Name="HomePageViewID" Type="nvarchar" MaxLength="20" />
+          <Property Name="IsPOS" Type="bit" />
+          <Property Name="status" Type="bit" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TblStock">
+          <Key>
+            <PropertyRef Name="StockID" />
+          </Key>
+          <Property Name="StockID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BrandID" Type="bigint" Nullable="false" />
+          <Property Name="PartID" Type="bigint" Nullable="false" />
+          <Property Name="ItemID" Type="bigint" Nullable="false" />
+          <Property Name="OrderedQty" Type="float" />
+          <Property Name="SoldQty" Type="float" />
+        </EntityType>
+        <EntityType Name="TblUserMaster">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LoginName" Type="nvarchar" MaxLength="50" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="100" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="100" />
+          <Property Name="Password" Type="nvarchar" MaxLength="100" />
+          <Property Name="EmailID" Type="nvarchar" MaxLength="200" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="PasswordAttemptCount" Type="int" Nullable="false" />
+          <Property Name="RoleID" Type="nvarchar" MaxLength="50" />
+          <Property Name="Status" Type="bit" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="int" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+        </EntityType>
+        <Function Name="sp_frm_get_Monthly_Sales_Report" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RequestedBy" Type="int" Mode="In" />
+          <Parameter Name="Year" Type="int" Mode="In" />
+          <Parameter Name="Month" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="sp_frm_get_Order_Report" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RequestedBy" Type="int" Mode="In" />
+          <Parameter Name="fromDate" Type="datetime" Mode="In" />
+          <Parameter Name="toDate" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="sp_frm_get_Payment_Report" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RequestedBy" Type="int" Mode="In" />
+          <Parameter Name="fromDate" Type="datetime" Mode="In" />
+          <Parameter Name="toDate" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="sp_frm_get_Stock_Report" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="BrandID" Type="bigint" Mode="In" />
+          <Parameter Name="PartID" Type="bigint" Mode="In" />
+          <Parameter Name="ItemID" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="sp_frm_getPurchases" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RequestedBy" Type="int" Mode="In" />
+          <Parameter Name="CreatedDate" Type="datetime" Mode="In" />
+          <Parameter Name="ItemName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="sp_frm_getPurchases_Bkp" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RequestedBy" Type="int" Mode="In" />
+          <Parameter Name="CreatedDate" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="sp_frm_getSales" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RequestedBy" Type="int" Mode="In" />
+          <Parameter Name="fromDate" Type="datetime" Mode="In" />
+          <Parameter Name="toDate" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="tfn_CoalesceConcatPaymentMode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="nvarchar(max)">
+          <Parameter Name="salesID" Type="bigint" Mode="In" />
+        </Function>
+        <EntityContainer Name="SpareProModelStoreContainer">
+          <EntitySet Name="TblAccPaymentDetails" EntityType="Self.TblAccPaymentDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblBrandMaster" EntityType="Self.TblBrandMaster" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblDefaultMasterDetail" EntityType="Self.TblDefaultMasterDetail" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblDefaultMasterHeader" EntityType="Self.TblDefaultMasterHeader" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblHomePage" EntityType="Self.TblHomePage" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblItemMaster" EntityType="Self.TblItemMaster" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblMenuMasterDetail" EntityType="Self.TblMenuMasterDetail" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblMenuMasterHeader" EntityType="Self.TblMenuMasterHeader" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblMenuRoleMatrixAccess" EntityType="Self.TblMenuRoleMatrixAccess" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblOrderDetails" EntityType="Self.TblOrderDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblOrders" EntityType="Self.TblOrders" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblPartMaster" EntityType="Self.TblPartMaster" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblPaymentDetails" EntityType="Self.TblPaymentDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblPurchaseDetails" EntityType="Self.TblPurchaseDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblPurchases" EntityType="Self.TblPurchases" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblRoleMaster" EntityType="Self.TblRoleMaster" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblStock" EntityType="Self.TblStock" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblUserMaster" EntityType="Self.TblUserMaster" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="SpareProModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="SpareProEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="TblBrandMasters" EntityType="SpareProModel.TblBrandMaster" />
+          <EntitySet Name="TblDefaultMasterDetails" EntityType="SpareProModel.TblDefaultMasterDetail" />
+          <EntitySet Name="TblDefaultMasterHeaders" EntityType="SpareProModel.TblDefaultMasterHeader" />
+          <EntitySet Name="TblHomePages" EntityType="SpareProModel.TblHomePage" />
+          <EntitySet Name="TblMenuMasterDetails" EntityType="SpareProModel.TblMenuMasterDetail" />
+          <EntitySet Name="TblMenuMasterHeaders" EntityType="SpareProModel.TblMenuMasterHeader" />
+          <EntitySet Name="TblRoleMasters" EntityType="SpareProModel.TblRoleMaster" />
+          <EntitySet Name="TblUserMasters" EntityType="SpareProModel.TblUserMaster" />
+          <EntitySet Name="TblMenuRoleMatrixAccesses" EntityType="SpareProModel.TblMenuRoleMatrixAccess" />
+          <EntitySet Name="TblItemMasters" EntityType="SpareProModel.TblItemMaster" />
+          <EntitySet Name="TblPartMasters" EntityType="SpareProModel.TblPartMaster" />
+          <EntitySet Name="TblPaymentDetails" EntityType="SpareProModel.TblPaymentDetail" />
+          <EntitySet Name="TblStocks" EntityType="SpareProModel.TblStock" />
+          <EntitySet Name="TblPurchaseDetails" EntityType="SpareProModel.TblPurchaseDetail" />
+          <EntitySet Name="TblPurchases" EntityType="SpareProModel.TblPurchas" />
+          <EntitySet Name="TblOrderDetails" EntityType="SpareProModel.TblOrderDetail" />
+          <EntitySet Name="TblOrders" EntityType="SpareProModel.TblOrder" />
+          <FunctionImport Name="sp_frm_get_Stock_Report" ReturnType="Collection(SpareProModel.sp_frm_get_Stock_Report_Result)">
+            <Parameter Name="BrandID" Mode="In" Type="Int64" />
+            <Parameter Name="PartID" Mode="In" Type="Int64" />
+            <Parameter Name="ItemID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="sp_frm_getSales" ReturnType="Collection(SpareProModel.sp_frm_getSales_Result)">
+            <Parameter Name="RequestedBy" Mode="In" Type="Int32" />
+            <Parameter Name="fromDate" Mode="In" Type="DateTime" />
+            <Parameter Name="toDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="sp_frm_get_Order_Report" ReturnType="Collection(SpareProModel.sp_frm_get_Order_Report_Result)">
+            <Parameter Name="RequestedBy" Mode="In" Type="Int32" />
+            <Parameter Name="fromDate" Mode="In" Type="DateTime" />
+            <Parameter Name="toDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="sp_frm_getPurchases" ReturnType="Collection(SpareProModel.sp_frm_getPurchases_Result)">
+            <Parameter Name="RequestedBy" Mode="In" Type="Int32" />
+            <Parameter Name="CreatedDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ItemName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_frm_get_Payment_Report" ReturnType="Collection(SpareProModel.sp_frm_get_Payment_Report_Result)">
+            <Parameter Name="RequestedBy" Mode="In" Type="Int32" />
+            <Parameter Name="fromDate" Mode="In" Type="DateTime" />
+            <Parameter Name="toDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="sp_frm_get_Monthly_Sales_Report" ReturnType="Collection(SpareProModel.sp_frm_get_Monthly_Sales_Report_Result)">
+            <Parameter Name="RequestedBy" Mode="In" Type="Int32" />
+            <Parameter Name="Year" Mode="In" Type="Int32" />
+            <Parameter Name="Month" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="TblAccPaymentDetails" EntityType="SpareProModel.TblAccPaymentDetail" />
+        </EntityContainer>
+        <EntityType Name="TblBrandMaster">
+          <Key>
+            <PropertyRef Name="BrandID" />
+          </Key>
+          <Property Name="BrandID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BrandName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="BrandImage" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="SortOrder" Type="Int32" />
+          <Property Name="Status" Type="Boolean" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="TblDefaultMasterDetail">
+          <Key>
+            <PropertyRef Name="DefaultDetailID" />
+          </Key>
+          <Property Name="DefaultDetailID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DefaultHeaderID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DefaultTextField" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="DefaultValueField" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Image" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="DefaultOrder" Type="Int32" />
+          <Property Name="IsSearch" Type="Boolean" />
+          <Property Name="IsPage" Type="Boolean" />
+          <Property Name="Status" Type="Boolean" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="TblDefaultMasterHeader">
+          <Key>
+            <PropertyRef Name="DefaultHeaderID" />
+          </Key>
+          <Property Name="DefaultHeaderID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DefaultHeaderName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="IsTextValue" Type="Boolean" />
+          <Property Name="SystemType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsImage" Type="Boolean" />
+          <Property Name="DefaultOrder" Type="Int32" />
+          <Property Name="Status" Type="Boolean" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="TblHomePage">
+          <Key>
+            <PropertyRef Name="HomePageViewID" />
+          </Key>
+          <Property Name="HomePageViewID" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="HomePageName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ControllerName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ActionName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Boolean" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="TblMenuMasterDetail">
+          <Key>
+            <PropertyRef Name="DetailViewID" />
+          </Key>
+          <Property Name="DetailViewID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="HeaderViewID" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="MenuName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PageUrl" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IconCls" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Disabled" Type="Boolean" />
+          <Property Name="OrderByTab" Type="Int32" />
+          <Property Name="IsPageAccess" Type="Boolean" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="TblMenuMasterHeader">
+          <Key>
+            <PropertyRef Name="HeaderViewID" />
+          </Key>
+          <Property Name="HeaderViewID" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="MenuName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Disabled" Type="Boolean" />
+          <Property Name="OrderByTab" Type="Int32" />
+          <Property Name="IconCls" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="TblRoleMaster">
+          <Key>
+            <PropertyRef Name="RoleID" />
+          </Key>
+          <Property Name="RoleID" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="RoleName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="HomePageViewID" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="IsPOS" Type="Boolean" />
+          <Property Name="status" Type="Boolean" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="TblUserMaster">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LoginName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="EmailID" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PasswordAttemptCount" Type="Int32" Nullable="false" />
+          <Property Name="RoleID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Boolean" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="TblMenuRoleMatrixAccess">
+          <Key>
+            <PropertyRef Name="RoleMatrixAccessID" />
+          </Key>
+          <Property Name="RoleMatrixAccessID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RoleID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="HeaderViewID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DetailViewID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DisplayOrder" Type="Int32" />
+          <Property Name="IsPageAccess" Type="Boolean" />
+          <Property Name="Status" Type="Boolean" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="TblItemMaster">
+          <Key>
+            <PropertyRef Name="ItemID" />
+          </Key>
+          <Property Name="ItemID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BrandID" Type="Int64" Nullable="false" />
+          <Property Name="PartID" Type="Int64" Nullable="false" />
+          <Property Name="ItemName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ItemPrice" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="InStock" Type="Boolean" />
+          <Property Name="SortOrder" Type="Int32" />
+          <Property Name="Status" Type="Boolean" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="TblPartMaster">
+          <Key>
+            <PropertyRef Name="PartID" />
+          </Key>
+          <Property Name="PartID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PartName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="SortOrder" Type="Int32" />
+          <Property Name="Status" Type="Boolean" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="TblPaymentDetail">
+          <Key>
+            <PropertyRef Name="PurchasePaymentID" />
+          </Key>
+          <Property Name="PurchasePaymentID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PurchaseID" Type="Int64" Nullable="false" />
+          <Property Name="PaymentDate" Type="DateTime" Precision="3" />
+          <Property Name="PaymentBy" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="PaymentAmount" Type="Double" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+          <Property Name="PaymentStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="TblStock">
+          <Key>
+            <PropertyRef Name="StockID" />
+          </Key>
+          <Property Name="StockID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BrandID" Type="Int64" Nullable="false" />
+          <Property Name="PartID" Type="Int64" Nullable="false" />
+          <Property Name="ItemID" Type="Int64" Nullable="false" />
+          <Property Name="OrderedQty" Type="Double" />
+          <Property Name="SoldQty" Type="Double" />
+        </EntityType>
+        <EntityType Name="TblPurchaseDetail">
+          <Key>
+            <PropertyRef Name="PurchaseDetailID" />
+          </Key>
+          <Property Name="PurchaseDetailID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PurchaseID" Type="Int64" Nullable="false" />
+          <Property Name="BrandID" Type="Int64" Nullable="false" />
+          <Property Name="PartID" Type="Int64" Nullable="false" />
+          <Property Name="ItemID" Type="Int64" Nullable="false" />
+          <Property Name="Color" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Qty" Type="Double" />
+          <Property Name="ItemPrice" Type="Decimal" Precision="25" Scale="4" />
+          <Property Name="TotalAmount" Type="Decimal" Precision="25" Scale="4" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="TblPurchas">
+          <Key>
+            <PropertyRef Name="PurchaseID" />
+          </Key>
+          <Property Name="PurchaseID" Type="Int64" Nullable="false" />
+          <Property Name="PurchaseDate" Type="DateTime" Precision="3" />
+          <Property Name="PurchaseStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PaymentStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TotalAmount" Type="Decimal" Precision="25" Scale="4" />
+          <Property Name="RequestedBy" Type="Int32" />
+          <Property Name="Note" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Boolean" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="TblOrderDetail">
+          <Key>
+            <PropertyRef Name="OrderDetailID" />
+          </Key>
+          <Property Name="OrderDetailID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderID" Type="Int64" Nullable="false" />
+          <Property Name="BrandID" Type="Int64" Nullable="false" />
+          <Property Name="PartID" Type="Int64" Nullable="false" />
+          <Property Name="ItemID" Type="Int64" Nullable="false" />
+          <Property Name="Qty" Type="Double" />
+          <Property Name="Color" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="ItemPrice" Type="Decimal" Precision="25" Scale="4" />
+          <Property Name="TotalAmount" Type="Decimal" Precision="25" Scale="4" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="TblOrder">
+          <Key>
+            <PropertyRef Name="OrderID" />
+          </Key>
+          <Property Name="OrderID" Type="Int64" Nullable="false" />
+          <Property Name="OrderDate" Type="DateTime" Precision="3" />
+          <Property Name="TotalAmount" Type="Decimal" Precision="25" Scale="4" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Int32" />
+          <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <ComplexType Name="sp_frm_get_Stock_Report_Result">
+          <Property Type="String" Name="ItemDesc" Nullable="true" MaxLength="300" />
+          <Property Type="Int64" Name="OrderQty" Nullable="true" />
+          <Property Type="Decimal" Name="OrderedCost" Nullable="true" Precision="18" Scale="3" />
+          <Property Type="Decimal" Name="OrderTotal" Nullable="true" Precision="38" Scale="3" />
+          <Property Type="Int64" Name="PurchasedQty" Nullable="true" />
+          <Property Type="Decimal" Name="PurchasedCost" Nullable="true" Precision="18" Scale="3" />
+          <Property Type="Decimal" Name="PurchasedTotal" Nullable="true" Precision="38" Scale="3" />
+          <Property Type="Int64" Name="Stock" Nullable="true" />
+          <Property Type="Decimal" Name="StockTotal" Nullable="true" Precision="38" Scale="3" />
+        </ComplexType>
+        <ComplexType Name="sp_frm_getSales_Result">
+          <Property Type="Int64" Name="PurchaseID" Nullable="false" />
+          <Property Type="DateTime" Name="PurchaseDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="CreatedDate" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="PurchaseStatus" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="PaymentStatus" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="RequestedBy" Nullable="true" MaxLength="201" />
+          <Property Type="Decimal" Name="TotalAmount" Nullable="true" Precision="25" Scale="4" />
+          <Property Type="Double" Name="PaidAmount" Nullable="true" />
+          <Property Type="Int32" Name="BalanceAmount" Nullable="false" />
+          <Property Type="String" Name="Items" Nullable="true" />
+          <Property Type="String" Name="Parts" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_frm_get_Order_Report_Result">
+          <Property Type="String" Name="CreatedDate" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="RequestedBy" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="TotalAmount" Nullable="true" MaxLength="31" />
+          <Property Type="String" Name="PaymentStatus" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Items" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_frm_getPurchases_Result">
+          <Property Type="Int64" Name="OrderID" Nullable="false" />
+          <Property Type="String" Name="CreatedDate" Nullable="true" MaxLength="30" />
+          <Property Type="Decimal" Name="TotalAmount" Nullable="true" Precision="25" Scale="4" />
+          <Property Type="String" Name="Brands" Nullable="true" />
+          <Property Type="String" Name="Items" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_frm_get_Payment_Report_Result">
+          <Property Type="String" Name="CreatedDate" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="RequestedBy" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="TotalAmount" Nullable="true" Precision="25" Scale="2" />
+          <Property Type="Decimal" Name="PaidAmount" Nullable="true" Precision="25" Scale="2" />
+          <Property Type="Decimal" Name="BalanceAmount" Nullable="true" Precision="25" Scale="2" />
+          <Property Type="String" Name="PaymentStatus" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="sp_frm_get_Monthly_Sales_Report_Result">
+          <Property Type="Int32" Name="Year" Nullable="true" />
+          <Property Type="String" Name="Month" Nullable="true" MaxLength="256" />
+          <Property Type="Decimal" Name="TotalAmount" Nullable="true" Precision="18" Scale="2" />
+          <Property Type="Decimal" Name="PaidAmount" Nullable="true" Precision="18" Scale="2" />
+          <Property Type="Decimal" Name="BalanceAmount" Nullable="true" Precision="19" Scale="2" />
+          <Property Type="String" Name="RequestedBy" Nullable="true" MaxLength="256" />
+        </ComplexType>
+        <EntityType Name="TblAccPaymentDetail">
+          <Key>
+            <PropertyRef Name="AccPaymentID" />
+          </Key>
+          <Property Name="AccPaymentID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PaymentDate" Type="DateTime" Precision="3" />
+          <Property Name="PaymentBy" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="PaidBy" Type="Int32" Nullable="false" />
+          <Property Name="PaymentAmount" Type="Double" />
+        </EntityType>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="SpareProModelStoreContainer" CdmEntityContainer="SpareProEntities">
+          <EntitySetMapping Name="TblBrandMasters">
+            <EntityTypeMapping TypeName="SpareProModel.TblBrandMaster">
+              <MappingFragment StoreEntitySet="TblBrandMaster">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="BrandImage" ColumnName="BrandImage" />
+                <ScalarProperty Name="BrandName" ColumnName="BrandName" />
+                <ScalarProperty Name="BrandID" ColumnName="BrandID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblDefaultMasterDetails">
+            <EntityTypeMapping TypeName="SpareProModel.TblDefaultMasterDetail">
+              <MappingFragment StoreEntitySet="TblDefaultMasterDetail">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="IsPage" ColumnName="IsPage" />
+                <ScalarProperty Name="IsSearch" ColumnName="IsSearch" />
+                <ScalarProperty Name="DefaultOrder" ColumnName="DefaultOrder" />
+                <ScalarProperty Name="Image" ColumnName="Image" />
+                <ScalarProperty Name="DefaultValueField" ColumnName="DefaultValueField" />
+                <ScalarProperty Name="DefaultTextField" ColumnName="DefaultTextField" />
+                <ScalarProperty Name="DefaultHeaderID" ColumnName="DefaultHeaderID" />
+                <ScalarProperty Name="DefaultDetailID" ColumnName="DefaultDetailID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblDefaultMasterHeaders">
+            <EntityTypeMapping TypeName="SpareProModel.TblDefaultMasterHeader">
+              <MappingFragment StoreEntitySet="TblDefaultMasterHeader">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="DefaultOrder" ColumnName="DefaultOrder" />
+                <ScalarProperty Name="IsImage" ColumnName="IsImage" />
+                <ScalarProperty Name="SystemType" ColumnName="SystemType" />
+                <ScalarProperty Name="IsTextValue" ColumnName="IsTextValue" />
+                <ScalarProperty Name="DefaultHeaderName" ColumnName="DefaultHeaderName" />
+                <ScalarProperty Name="DefaultHeaderID" ColumnName="DefaultHeaderID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblHomePages">
+            <EntityTypeMapping TypeName="SpareProModel.TblHomePage">
+              <MappingFragment StoreEntitySet="TblHomePage">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="ActionName" ColumnName="ActionName" />
+                <ScalarProperty Name="ControllerName" ColumnName="ControllerName" />
+                <ScalarProperty Name="HomePageName" ColumnName="HomePageName" />
+                <ScalarProperty Name="HomePageViewID" ColumnName="HomePageViewID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblMenuMasterDetails">
+            <EntityTypeMapping TypeName="SpareProModel.TblMenuMasterDetail">
+              <MappingFragment StoreEntitySet="TblMenuMasterDetail">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsPageAccess" ColumnName="IsPageAccess" />
+                <ScalarProperty Name="OrderByTab" ColumnName="OrderByTab" />
+                <ScalarProperty Name="Disabled" ColumnName="Disabled" />
+                <ScalarProperty Name="IconCls" ColumnName="IconCls" />
+                <ScalarProperty Name="PageUrl" ColumnName="PageUrl" />
+                <ScalarProperty Name="MenuName" ColumnName="MenuName" />
+                <ScalarProperty Name="HeaderViewID" ColumnName="HeaderViewID" />
+                <ScalarProperty Name="DetailViewID" ColumnName="DetailViewID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblMenuMasterHeaders">
+            <EntityTypeMapping TypeName="SpareProModel.TblMenuMasterHeader">
+              <MappingFragment StoreEntitySet="TblMenuMasterHeader">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IconCls" ColumnName="IconCls" />
+                <ScalarProperty Name="OrderByTab" ColumnName="OrderByTab" />
+                <ScalarProperty Name="Disabled" ColumnName="Disabled" />
+                <ScalarProperty Name="MenuName" ColumnName="MenuName" />
+                <ScalarProperty Name="HeaderViewID" ColumnName="HeaderViewID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblRoleMasters">
+            <EntityTypeMapping TypeName="SpareProModel.TblRoleMaster">
+              <MappingFragment StoreEntitySet="TblRoleMaster">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="IsPOS" ColumnName="IsPOS" />
+                <ScalarProperty Name="HomePageViewID" ColumnName="HomePageViewID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="RoleName" ColumnName="RoleName" />
+                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblUserMasters">
+            <EntityTypeMapping TypeName="SpareProModel.TblUserMaster">
+              <MappingFragment StoreEntitySet="TblUserMaster">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
+                <ScalarProperty Name="PasswordAttemptCount" ColumnName="PasswordAttemptCount" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="EmailID" ColumnName="EmailID" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblMenuRoleMatrixAccesses">
+            <EntityTypeMapping TypeName="SpareProModel.TblMenuRoleMatrixAccess">
+              <MappingFragment StoreEntitySet="TblMenuRoleMatrixAccess">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="IsPageAccess" ColumnName="IsPageAccess" />
+                <ScalarProperty Name="DisplayOrder" ColumnName="DisplayOrder" />
+                <ScalarProperty Name="DetailViewID" ColumnName="DetailViewID" />
+                <ScalarProperty Name="HeaderViewID" ColumnName="HeaderViewID" />
+                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
+                <ScalarProperty Name="RoleMatrixAccessID" ColumnName="RoleMatrixAccessID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblItemMasters">
+            <EntityTypeMapping TypeName="SpareProModel.TblItemMaster">
+              <MappingFragment StoreEntitySet="TblItemMaster">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="InStock" ColumnName="InStock" />
+                <ScalarProperty Name="ItemPrice" ColumnName="ItemPrice" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="PartID" ColumnName="PartID" />
+                <ScalarProperty Name="BrandID" ColumnName="BrandID" />
+                <ScalarProperty Name="ItemID" ColumnName="ItemID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblPartMasters">
+            <EntityTypeMapping TypeName="SpareProModel.TblPartMaster">
+              <MappingFragment StoreEntitySet="TblPartMaster">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="PartName" ColumnName="PartName" />
+                <ScalarProperty Name="PartID" ColumnName="PartID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblPaymentDetails">
+            <EntityTypeMapping TypeName="SpareProModel.TblPaymentDetail">
+              <MappingFragment StoreEntitySet="TblPaymentDetails">
+                <ScalarProperty Name="PaymentStatus" ColumnName="PaymentStatus" />
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
+                <ScalarProperty Name="PaymentBy" ColumnName="PaymentBy" />
+                <ScalarProperty Name="PaymentDate" ColumnName="PaymentDate" />
+                <ScalarProperty Name="PurchaseID" ColumnName="PurchaseID" />
+                <ScalarProperty Name="PurchasePaymentID" ColumnName="PurchasePaymentID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblStocks">
+            <EntityTypeMapping TypeName="SpareProModel.TblStock">
+              <MappingFragment StoreEntitySet="TblStock">
+                <ScalarProperty Name="SoldQty" ColumnName="SoldQty" />
+                <ScalarProperty Name="OrderedQty" ColumnName="OrderedQty" />
+                <ScalarProperty Name="ItemID" ColumnName="ItemID" />
+                <ScalarProperty Name="PartID" ColumnName="PartID" />
+                <ScalarProperty Name="BrandID" ColumnName="BrandID" />
+                <ScalarProperty Name="StockID" ColumnName="StockID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblPurchaseDetails">
+            <EntityTypeMapping TypeName="SpareProModel.TblPurchaseDetail">
+              <MappingFragment StoreEntitySet="TblPurchaseDetails">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
+                <ScalarProperty Name="ItemPrice" ColumnName="ItemPrice" />
+                <ScalarProperty Name="Qty" ColumnName="Qty" />
+                <ScalarProperty Name="Color" ColumnName="Color" />
+                <ScalarProperty Name="ItemID" ColumnName="ItemID" />
+                <ScalarProperty Name="PartID" ColumnName="PartID" />
+                <ScalarProperty Name="BrandID" ColumnName="BrandID" />
+                <ScalarProperty Name="PurchaseID" ColumnName="PurchaseID" />
+                <ScalarProperty Name="PurchaseDetailID" ColumnName="PurchaseDetailID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblPurchases">
+            <EntityTypeMapping TypeName="SpareProModel.TblPurchas">
+              <MappingFragment StoreEntitySet="TblPurchases">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
+                <ScalarProperty Name="PaymentStatus" ColumnName="PaymentStatus" />
+                <ScalarProperty Name="PurchaseStatus" ColumnName="PurchaseStatus" />
+                <ScalarProperty Name="PurchaseDate" ColumnName="PurchaseDate" />
+                <ScalarProperty Name="PurchaseID" ColumnName="PurchaseID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblOrderDetails">
+            <EntityTypeMapping TypeName="SpareProModel.TblOrderDetail">
+              <MappingFragment StoreEntitySet="TblOrderDetails">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
+                <ScalarProperty Name="ItemPrice" ColumnName="ItemPrice" />
+                <ScalarProperty Name="Color" ColumnName="Color" />
+                <ScalarProperty Name="Qty" ColumnName="Qty" />
+                <ScalarProperty Name="ItemID" ColumnName="ItemID" />
+                <ScalarProperty Name="PartID" ColumnName="PartID" />
+                <ScalarProperty Name="BrandID" ColumnName="BrandID" />
+                <ScalarProperty Name="OrderID" ColumnName="OrderID" />
+                <ScalarProperty Name="OrderDetailID" ColumnName="OrderDetailID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblOrders">
+            <EntityTypeMapping TypeName="SpareProModel.TblOrder">
+              <MappingFragment StoreEntitySet="TblOrders">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
+                <ScalarProperty Name="OrderDate" ColumnName="OrderDate" />
+                <ScalarProperty Name="OrderID" ColumnName="OrderID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="sp_frm_get_Stock_Report" FunctionName="SpareProModel.Store.sp_frm_get_Stock_Report">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SpareProModel.sp_frm_get_Stock_Report_Result">
+                <ScalarProperty Name="ItemDesc" ColumnName="ItemDesc" />
+                <ScalarProperty Name="OrderQty" ColumnName="OrderQty" />
+                <ScalarProperty Name="OrderedCost" ColumnName="OrderedCost" />
+                <ScalarProperty Name="OrderTotal" ColumnName="OrderTotal" />
+                <ScalarProperty Name="PurchasedQty" ColumnName="PurchasedQty" />
+                <ScalarProperty Name="PurchasedCost" ColumnName="PurchasedCost" />
+                <ScalarProperty Name="PurchasedTotal" ColumnName="PurchasedTotal" />
+                <ScalarProperty Name="Stock" ColumnName="Stock" />
+                <ScalarProperty Name="StockTotal" ColumnName="StockTotal" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_frm_getSales" FunctionName="SpareProModel.Store.sp_frm_getSales">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SpareProModel.sp_frm_getSales_Result">
+                <ScalarProperty Name="PurchaseID" ColumnName="PurchaseID" />
+                <ScalarProperty Name="PurchaseDate" ColumnName="PurchaseDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="PurchaseStatus" ColumnName="PurchaseStatus" />
+                <ScalarProperty Name="PaymentStatus" ColumnName="PaymentStatus" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
+                <ScalarProperty Name="PaidAmount" ColumnName="PaidAmount" />
+                <ScalarProperty Name="BalanceAmount" ColumnName="BalanceAmount" />
+                <ScalarProperty Name="Items" ColumnName="Items" />
+                <ScalarProperty Name="Parts" ColumnName="Parts" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_frm_get_Order_Report" FunctionName="SpareProModel.Store.sp_frm_get_Order_Report">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SpareProModel.sp_frm_get_Order_Report_Result">
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
+                <ScalarProperty Name="PaymentStatus" ColumnName="PaymentStatus" />
+                <ScalarProperty Name="Items" ColumnName="Items" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_frm_getPurchases" FunctionName="SpareProModel.Store.sp_frm_getPurchases">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SpareProModel.sp_frm_getPurchases_Result">
+                <ScalarProperty Name="OrderID" ColumnName="OrderID" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
+                <ScalarProperty Name="Brands" ColumnName="Brands" />
+                <ScalarProperty Name="Items" ColumnName="Items" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_frm_get_Payment_Report" FunctionName="SpareProModel.Store.sp_frm_get_Payment_Report">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SpareProModel.sp_frm_get_Payment_Report_Result">
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
+                <ScalarProperty Name="PaidAmount" ColumnName="PaidAmount" />
+                <ScalarProperty Name="BalanceAmount" ColumnName="BalanceAmount" />
+                <ScalarProperty Name="PaymentStatus" ColumnName="PaymentStatus" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_frm_get_Monthly_Sales_Report" FunctionName="SpareProModel.Store.sp_frm_get_Monthly_Sales_Report">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SpareProModel.sp_frm_get_Monthly_Sales_Report_Result">
+                <ScalarProperty Name="Year" ColumnName="Year" />
+                <ScalarProperty Name="Month" ColumnName="Month" />
+                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
+                <ScalarProperty Name="PaidAmount" ColumnName="PaidAmount" />
+                <ScalarProperty Name="BalanceAmount" ColumnName="BalanceAmount" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="TblAccPaymentDetails">
+            <EntityTypeMapping TypeName="SpareProModel.TblAccPaymentDetail">
+              <MappingFragment StoreEntitySet="TblAccPaymentDetails">
+                <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
+                <ScalarProperty Name="PaidBy" ColumnName="PaidBy" />
+                <ScalarProperty Name="PaymentBy" ColumnName="PaymentBy" />
+                <ScalarProperty Name="PaymentDate" ColumnName="PaymentDate" />
+                <ScalarProperty Name="AccPaymentID" ColumnName="AccPaymentID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

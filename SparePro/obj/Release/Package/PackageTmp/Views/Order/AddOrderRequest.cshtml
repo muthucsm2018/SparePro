@@ -1,0 +1,571 @@
+﻿@using SparePro.Repository.Resource;
+
+@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script>
+        $.ajax({
+            type: "GET",
+            url: BaseURL + "Common/Load_Brand",
+            datatype: "Json",
+            success: function (data) {
+                $("#DdlBrand option").remove();
+                $.each(data, function (index, value) {
+                    $('#DdlBrand').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        }).done(function (result) {
+
+        });
+
+        $.ajax({
+            type: "GET",
+            url: BaseURL + "Common/Load_Part",
+            datatype: "Json",
+            success: function (data) {
+                $("#DdlPart option").remove();
+                $.each(data, function (index, value) {
+                    $('#DdlPart').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        }).done(function (result) {
+
+        });
+
+        var vOrderDetailID = 0;
+        ShowCommonBack();
+
+        if (GetParamValue("OrderID") != 0) {
+            $('#btnSaveOrders').show();
+        }
+        else {
+            ClearOrders();  
+            $('#btnSaveOrders').show();
+        }
+
+        TxtQty = function (value, record, $cell, $displayEl, id) {
+            var Qty = 0;
+            if (typeof record.Quantity === 'undefined') {
+                Qty = 0;
+            }
+            else {
+                Qty = record.Quantity;
+            }
+
+            var HTMLContent = '<center><input type="number"  tabindex=2 min="0" onkeyup="if(this.value<0){this.value= this.value * -1}" ID="TxtQty_' + record.ItemID + '-' + record.OrderDetailID + '" Name="TxtQty_' + record.ItemID + '-' + record.OrderDetailID + '" style="width:90%" class="form-control"  onchange="SubtotalOnchange(' + id + ',' + record.ItemID + ', ' + record.OrderDetailID + ')" value=' + Qty + '  /></center>';
+            $displayEl.html("");
+            $displayEl.append(HTMLContent);
+
+        }
+
+        TxtPrice = function (value, record, $cell, $displayEl, id) {
+            var Price = 0;
+            if (typeof record.ItemPrice === 'undefined') {
+                Price = 0;
+            }
+            else {
+                Price = record.ItemPrice;
+            }
+
+            var HTMLContent = '<center><input type="number"  tabindex=3 min="0" onkeyup="if(this.value<0){this.value= this.value * -1}" ID="TxtPrice_' + record.ItemID + '-' + record.OrderDetailID + '" Name="TxtPrice_' + record.ItemID + '-' + record.OrderDetailID + '" style="width:90%" class="form-control"  onchange="SubtotalOnchange(' + id + ',' + record.ItemID + ', ' + record.OrderDetailID + ')" value=' + Price + '  /></center>';
+            $displayEl.html("");
+            $displayEl.append(HTMLContent);
+
+        }
+
+        function RecalculateTotal() {
+            var vTAmt = parseFloat($("#TxtTotalAmount").text());
+            $("#TxtGrandTotal").text(vTAmt).toFixed(2);
+        }
+
+        function SubtotalOnchange(ID, ItemID, OrderDetailID) {
+
+            var Qty = document.getElementById("TxtQty_" + ItemID + '-' + OrderDetailID).value;
+            var ItemPrice = document.getElementById("TxtPrice_" + ItemID + '-' + OrderDetailID).value;
+
+            var data = GrdOrderdProducts.getById(ID);
+            //var ItemPrice = data.ItemPrice;
+
+            var subtot = 0;
+            subtot = parseFloat(Qty) * parseFloat(ItemPrice);
+
+            GrdOrderdProducts.updateRow(ID, {
+                'OrderDetailID': ID, 'BrandName': data.BrandName, 'PartName': data.PartName, 'ItemName': data.ItemName, 'Quantity': Qty, 'ItemPrice': ItemPrice,
+                'TotalAmount': subtot, 'ModeType': data.ModeType, 'ItemID': data.ItemID, 'BrandID': data.BrandID, 'PartID': data.PartID
+            });
+
+            GrdOrderdProducts.reload();
+        }
+
+        renderer = function (value, record, $cell, $displayEl, id) {
+
+            var HTMLContent = '<table style=width:100%><tr>';
+            HTMLContent += '<td style="border:0px solid #FFF;"><a tabindex="-1" onclick="DeleteOrderDetail(' + id + ')" style="cursor:pointer"><i class="far fa-trash-alt Form-GridDeleteButton"></i></a></td>';
+
+            $displayEl.html("</tr></table>");
+            $displayEl.append(HTMLContent);
+        }
+
+        GrdOrderdProducts = $("#GrdOrderdProducts").grid({
+            primaryKey: "OrderDetailID",
+            uiLibrary: "bootstrap4",
+            columns: [
+                {
+                    title: 'Brand Name', width: 100, field: "BrandName", align: "left"
+                },
+                {
+                    title: 'Part Name', width: 100, field: "PartName", align: "left"
+                },
+                {
+                    title: 'Item Name', width: 100, field: "ItemName", align: "left"
+                },
+                {
+                    field: "Quantity", width: 40, title: "Quantity", renderer: TxtQty
+                },
+                { field: "ItemPrice", width: 50, title: "Price", renderer: TxtPrice },
+                { field: "TotalAmount", width: 50, title: "Sub Total" },
+                { field: "OrderDetailID", title: "OrderDetailID", width: 50, hidden: true },
+                { field: "ModeType", title: "@PROPageModel.Purchase_ModeType", width: 10, hidden: true },
+                { field: "BrandID", title: "BrandID", width: 50, hidden: true },
+                { field: "PartID", title: "PartID", width: 50, hidden: true },
+                { field: "ItemID", title: "ItemID", width: 50, hidden: true },
+                { field: '@Button.Button_Action', width: 30, align: "center", renderer: renderer }
+            ]
+        });
+
+        GrdOrderdProducts.on('dataBound', function (e, records, totalRecords) {
+            var sum = 0;
+            $.each(records, function () {
+                sum += parseFloat(this.TotalAmount);
+            });
+
+            $("#txtGrandTotal").text(sum.toFixed(2));
+
+        });
+
+        function DeleteOrderDetail(OrderID) {
+
+            GrdOrderdProducts.removeRow(OrderID);
+            GrdOrderdProducts.reload();
+        }
+
+        function IsMinusCheck(dataOrderd) {
+            var IsMinus = false;
+            for (var i = 1; i <= dataOrderd.length; i++) {
+                var Recorddata = GrdOrderdProducts.get(i);
+                var Qty = document.getElementById("TxtQty_" + Recorddata.ItemID + '-' + Recorddata.OrderDetailID).value;
+
+                if (Math.sign(Qty) <= 0) {
+                    IsMinus = true;
+                    break;
+                }
+
+            }
+
+            return IsMinus;
+        }
+
+        function FormValidate() {
+            var Result = true;
+            var dataOrderd = GrdOrderdProducts.getAll();
+
+            if (dataOrderd.length == 0) {
+                ErrorAlert("Please add some products to Order");
+                return false
+            }
+            else if (IsMinusCheck(dataOrderd)) {
+                ErrorAlert("Zero/negative value not allowed ");
+                return false
+            }
+
+            return Result;
+        }
+
+        $('#btnSaveOrders').click(function (e) {
+            if ($(this).hasClass("unclickable")) {
+                e.preventDefault();
+            } else {
+
+                var dataOrder = GrdOrderdProducts.getAll();
+
+                var ArrOrderDetail = new Array();
+                for (var i = 1; i <= dataOrder.length; i++) {
+
+                    var Recorddata = GrdOrderdProducts.get(i);
+                    var ObjOrder = new Object();
+
+                    ObjOrder.BrandID = Recorddata.BrandID;
+                    ObjOrder.PartID = Recorddata.PartID;
+                    ObjOrder.ItemID = Recorddata.ItemID;
+                    ObjOrder.Quantity = Recorddata.Quantity;
+                    ObjOrder.ItemPrice = Recorddata.ItemPrice;
+                    ObjOrder.TotalAmount = Recorddata.TotalAmount;
+                    ObjOrder.ModeType = Recorddata.ModeType;
+
+                    ArrOrderDetail[i - 1] = ObjOrder;
+                   
+                }
+
+                if (FormValidate(dataOrder) == true) {
+
+                    $.confirm({
+                        title: ConfirmAlert_SuccessMessage,
+                        content: GetParamValue("OrderID") == 0 ? ConfirmAlert_Message_Content.replace("{0}", ConfirmAlert_SaveMessage_Content) : ConfirmAlert_Message_Content.replace("{0}", ConfirmAlert_UpdateMessage_Content),
+                        animation: 'zoom',
+                        closeAnimation: 'zoom',
+                        buttons: {
+                            'confirm': {
+                                text: Alert_YesMessage,
+                                btnClass: Alert_Button_Style,
+                                action: function () {
+
+                                    var fileData = new FormData();
+
+                                    fileData.append("OrderID", $('#HdnOrderID').val());
+                                    fileData.append("TotalAmount", $("#txtGrandTotal").text());
+
+                                    for (i = 0; i < ArrOrderDetail.length; i++) {
+                                        fileData.append("OrderDetail[" + i + "].OrderID", $('#HdnOrderID').val());
+                                        fileData.append("OrderDetail[" + i + "].BrandID", ArrOrderDetail[i].BrandID);
+                                        fileData.append("OrderDetail[" + i + "].PartID", ArrOrderDetail[i].PartID);
+                                        fileData.append("OrderDetail[" + i + "].ItemID", ArrOrderDetail[i].ItemID);
+                                        fileData.append("OrderDetail[" + i + "].Quantity", ArrOrderDetail[i].Quantity);
+                                        fileData.append("OrderDetail[" + i + "].ItemPrice", ArrOrderDetail[i].ItemPrice);
+                                        fileData.append("OrderDetail[" + i + "].TotalAmount", ArrOrderDetail[i].TotalAmount);
+                                        fileData.append("OrderDetail[" + i + "].ModeType", ArrOrderDetail[i].ModeType);
+                                        
+                                    }
+
+                                    $.ajax({
+                                        url: BaseURL + "Order/Order_Save", type: "POST",
+                                        contentType: false, // Not to set any content header
+                                        processData: false,
+                                        data: fileData
+
+                                    }).done(function (result) {
+                                        if (result.Result == true) {
+                                            SucessAlert(result.Message);
+                                            ClearOrders();
+                                            BackFunction();
+                                        }
+                                        else if (result.Result == false) {
+                                            ErrorAlert(result.Message);
+                                        }
+                                    })
+                                        .fail(function (result) {
+                                            ErrorAlert(result.Message);
+                                        });
+                                }
+
+                            },
+                            cancel: {
+                                text: Alert_NoMessage,
+                                btnClass: Alert_Button_Style
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
+        $("#btnOrderReset").click(function () {
+            if ($(this).hasClass("unclickable")) {
+                e.preventDefault();
+            } else {
+                $(this).addClass("unclickable");
+                ResetOrder();
+            }
+        });
+
+        function ResetOrder() {
+            if (GetParamValue("OrderID") != 0) {
+                //OrderGridClear();
+                EditOrders();
+            }
+            else {
+                ClearOrders();
+            }
+        }
+
+        function GenerateOrderID() {
+            $.ajax({
+                type: "GET",
+                url: BaseURL + "Order/GenerateOrderID",
+                datatype: "Json",
+                success: function (data) {                   
+                    $("#HdnOrderID").val(data);
+                    $("#txtOrderID").val(data);
+                }
+            });
+        }
+
+        function ClearOrders() {
+
+        }
+
+
+        $('#txtOrderDate').datepicker({
+            format: Common_Date_Format, autoclose: true, uiLibrary: 'bootstrap4', iconsLibrary: 'fontawesome', size: 'small', todayHighlight: true
+        });
+
+        $('input[id="txtOrderDate"]').val(TodayDateRange);
+
+        function TodayDateRange() {
+            let monthNames = ["Jan", "Feb", "Mar", "Apr",
+                "May", "Jun", "Jul", "Aug",
+                "Sep", "Oct", "Nov", "Dec"];
+
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth(); //January is 0!
+            var yyyy = today.getFullYear();
+
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+
+            let monthName = monthNames[mm];
+
+            return dd + '-' + monthName + '-' + yyyy;
+        }
+
+        $('#ProductSearch').autocomplete({
+            minLength: 1,
+            source: function (request, response) {
+                var product = new Array();
+                $.ajax({
+                    async: false,
+                    cache: false,
+                    type: "POST",
+                    url: "@(Url.Action("Product_PurchaseAutocomplete", "Common"))",
+                    data: { "term": request.term, BrandID: $('#DdlBrand').val(), PartID: $('#DdlPart').val() },
+                    success: function (data) {
+
+                        if (data.records != null) {
+                            if (data.records.length == 0) {
+                                ErrorAlert("No results found!");
+                                Result = false;
+                                return false;
+                            }
+                            else if (data.DistributorID != 0) {
+                                for (var i = 0; i < data.records.length; i++) {
+                                    product[i] = { label: data.records[i].label, Id: data.records[i].id };
+                                }
+                            }
+                        }
+
+                    }
+                });
+                response(product);
+
+            },
+            select: function (event, ui) {
+                $.ajax({
+                    cache: false,
+                    async: false,
+                    type: "POST",
+                    url: "@(Url.Action("Product_GetDetail", "Common"))",
+                    data: { "ItemID": ui.item.Id },
+                    success: function (data) {
+                        if (ISProductCheck(ui.item.Id)) {
+
+                            var vOrderdetailID = (1000 + (GrdOrderdProducts.count(true) + 1));
+                           
+                            GrdOrderdProducts.addRow({
+                                'OrderDetailID': vOrderdetailID, 'BrandName': data.BrandName, 'PartName': data.PartName, 'ItemName': data.ItemName, 'ItemPrice': data.ItemPrice, 'Quantity': 0, 'TotalAmount': 0, 
+                                'ModeType': 'TP', 'ItemID': data.ItemID, 'BrandID': data.BrandID, 'PartID': data.PartID
+                            });
+
+                            var TxtQty = document.getElementById('TxtQty_' + ui.item.Id + '-' + vOrderdetailID);
+                            TxtQty.select();
+                        }
+                    }
+                });
+                $(this).val("");
+                return false;
+            }
+
+        });
+
+        function ISProductCheck(ItemID) {
+
+            var Result = true;
+            var dataPayment = GrdOrderdProducts.getAll();
+            for (var i = 1; i <= dataPayment.length; i++) {
+                var Recorddata = GrdOrderdProducts.get(i);
+
+                if (Recorddata.ItemID == ItemID) {
+                    Result = false;
+                    break;
+                }
+            }
+            return Result;
+        }
+
+        EditOrders();
+
+        function EditOrders() {
+
+            if (GetParamValue("OrderID") != 0) {
+
+                $.ajax({
+                    type: "GET",
+                    url: BaseURL + "Order/Order_Edit",
+                    data: { OrderID: GetParamValue("OrderID") },
+                    datatype: "Json",
+                    success: function (data) {
+
+                        $("#HdnOrderID").val(data.OrderID);
+                        $("#txtOrderID").val(data.OrderID);
+                        $("#txtOrderDate").val(GetParseJsonDate(data.OrderDate));
+                        $("#divdate").hide();
+
+                        $.ajax({
+                            type: "GET",
+                            data: { OrderID: GetParamValue("OrderID") },
+                            url: BaseURL + "Order/OrderDetail_FindAll",
+                            datatype: "Json",
+                            success: function (data) {
+                                $.each(data.records, function (index, value) {
+                                    GrdOrderdProducts.addRow({
+                                        'OrderDetailID': value.OrderDetailID, 'BrandName': value.BrandName, 'PartName': value.PartName, 'ItemName': value.ItemName,
+                                        'Quantity': value.Quantity, 'ItemPrice': value.ItemPrice,
+                                        'TotalAmount': value.TotalAmount, 'ModeType': 'DB', 'ItemID': value.ItemID, 'BrandID': value.BrandID, 'PartID': value.PartID
+                                    });
+                                    GrdOrderdProducts.reload();
+                                });
+                            }
+                        });
+
+                    }
+                });
+            }
+            else {
+                GenerateOrderID();
+                $("#divdate").show();
+            }
+        }
+    </script>
+</head>
+<body>
+    <input type="hidden" id="HdnOrderID">
+   
+    <!-- Main content -->
+    <div class="content" id="contentdiv">
+        <div class="container-fluid">
+            <div class="row">
+
+                <!-- /.col-md-12 -->
+                <div class="col-lg-12">
+                    <div class="card card-pd">
+                        <div class="card-header">
+                            <span style="font-size: 18px;" class="m-0"><i class="fas fa-shipping-fast"></i></span>
+                            <span style="font-size: 18px; border-left: 1px solid #ccc; padding-left: 10px;"> Purchases - [Add/Edit] </span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-4" id="divdate" name="divdate">
+                                    <div class="form-group required">
+                                        <label class="control-label">Purchase Date</label>
+                                        <input type="text" readonly autocomplete="off" class="form-control" id="txtOrderDate">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Purchase PONumber</label>
+                                        <input type="text" class="form-control" autocomplete="off" readonly id="txtOrderID" name="txtOrderID" maxlength="55">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>Brand Name</label>
+                                        <div>
+                                            @Html.DropDownList("DdlBrand", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 1, @width = "100%" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="control-label">Part Name</label>
+                                        @Html.DropDownList("DdlPart", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 1, @width = "100%" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-10">
+                                    <div style="padding: 15px; background-color: #f6f6f6;">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" style="font-size: 30px;"><i class="fas fa-barcode"></i></span>
+                                            </div>
+                                            <input type="text" class="form-control" id="ProductSearch" style="font-size: 20px; height: 50px;" placeholder="Please add product to orderlist">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-1">
+                                    <div class="form-group">
+                                        <label class="control-label"></label>
+                                        <button type="button" id="BtnProductSearch" class="btn btn-primary btn-block" style="height: 35px; margin-top: 0px;"><i class="fa fa-search"></i></button>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="padding-top: 30px;">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>
+                                            Purchase Items
+                                        </label>
+                                    </div>
+
+                                    <table id="GrdOrderdProducts"></table>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="pdt-25">
+                                    <div class="row">
+                                        <div class="col-sm-6" style="display:none">
+                                            <button type="button" id="btnOrderReset" class="btn btn-secondary btn-block"><i class="fa fa-undo"></i> @SparePro.Repository.WEBPAGEBUTTON.RESET</button>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <button type="button" id="btnSaveOrders" class="btn btn-primary btn-block"><i class="fa fa-save"></i> @SparePro.Repository.WEBPAGEBUTTON.SAVE</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div id="bottom-total" class="well well-sm" style="margin-bottom: 0px; position: static; bottom: 0px; width:100%; z-index: 2;">
+                                <table class="table table-bordered table-condensed totals" style="margin-bottom:0;">
+                                    <tbody>
+                                        <tr class="TotalView">
+                                            <td>@PROPageModel.Common_GrandTotal <span class="totals_val pull-right" style="font-weight: bold;" id="txtGrandTotal">0.00</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.col-md-12 -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content -->    
+    
+</body>
+
+</html>
+

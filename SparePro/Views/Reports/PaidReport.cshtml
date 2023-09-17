@@ -1,0 +1,393 @@
+﻿@using SparePro.Repository.Resource;
+
+@{
+    Layout = "";
+}
+
+
+<head>
+    <style>
+        .PurchasePopover {
+            padding: 15px 25px 20px 25px;
+        }
+
+        a.ViewLinkChange:hover, a.ViewLinkChange:active {
+            color: #0069d9;
+            font-weight: bold;
+        }
+    </style>
+
+    <script>
+
+        $("#TxtFromDate").datepicker({
+            format: Common_Date_Format, autoclose: true, uiLibrary: 'bootstrap4', iconsLibrary: 'fontawesome', size: 'small'
+        });
+
+        $("#TxtToDate").datepicker({
+            format: Common_Date_Format, autoclose: true, uiLibrary: 'bootstrap4', iconsLibrary: 'fontawesome', size: 'small'
+        });
+
+        var GrdPurchaseBalance, PurchaseStatus = '';
+
+        ShowCommonBack();
+
+        $('body').on('click', function (e) {
+            if ($(e.target).data('toggle') !== 'popover' && $(e.target).parents('.popover.in').length === 0) {
+                $('.popover').popover('hide');
+            }
+        });
+
+       
+
+        $.ajax({
+            type: "GET",
+            url: BaseURL + "Common/Load_DefaultType",
+            datatype: "Json",
+            data: { DefaultType: "@SparePro.Repository.DEFAULTMASTER.DefaultHeaderMaster_PaymentMode_ViewID" },
+            success: function (data) {
+                $("#DdlPaymentMode option").remove();
+                $.each(data, function (index, value) {
+                    $('#DdlPaymentMode').append('<option value="' + value.DefaultID + '">' + value.DefaultName + '</option>');
+                });
+            }
+        }).done(function (result) {
+            $("#DdlPaymentMode").val("@SparePro.Repository.DEFAULTMASTER.DefaultDetailMaster_PaymentModeCash_ViewID");
+        });
+
+        $.ajax({
+            type: "GET",
+            url: BaseURL + "Common/Load_SystemUserDetail",
+            datatype: "Json",
+            success: function (data) {
+                $("#ddlRequestedBy option").remove();
+                $.each(data, function (index, value) {
+                    $('#ddlRequestedBy').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        })
+
+        renderer = function (value, record, $cell, $displayEl, id) {
+
+            var HTMLContent = '<div>';
+
+            if (record.PurchaseStatusStr != "Cancelled") {
+                HTMLContent += '<input tabindex="-1"  class="form-check-input" type="checkbox" value="" id="IsChecked"><br/>';
+            }
+
+            HTMLContent += '</div>';
+
+            $displayEl.html("");
+            $displayEl.append(HTMLContent);
+        }
+
+        GrdPurchaseBalance = $("#GrdPurchaseBalance").grid({
+            primaryKey: "PurchaseID",
+            uiLibrary: "bootstrap4",
+            //detailTemplate: '<div class="docs-callout"><div class="row"></div></div>',
+            responsive: true,
+            //showHiddenColumnsAsDetails: true,
+            dataSource: '@Url.Action("Purchase_FindAllOnlyBalance", "Purchase")',
+            columns: [
+                //{ field: '@Button.Button_Action', width: 85, align: "center", renderer: renderer, title: '<i class="fa fa-object-group"></i>' },
+                { field: 'IsChecked', width: 85, align: "center", renderer: renderer, title: '' },
+                { field: "CreatedDate", width: 80, title: "Date", sortable: false, align: "center" },
+                { field: "PurchaseID", width: 80, title: "ID", sortable: true, align: "left" },
+                { field: "RequestedBy", width:125, title: "User", sortable: true, align: "left" },
+                {
+                    field: "PurchaseStatus", width: 80, title: "Purchase", sortable: true, renderer: function (value, record) {
+                        if (record.PurchaseStatus == "Cancelled") {
+                            return '<div class="text-center"><span class="badge badge-danger">' + record.PurchaseStatus + '</span></div>';
+                        }
+                        else if (record.PurchaseStatus == "Requested") {
+                            return '<div class="text-center"><span class="badge badge-info">' + record.PurchaseStatus + '</span></div>';
+                        }
+                        else if (record.PurchaseStatus == "Approved") {
+                            return '<div class="text-center"><span class="badge badge-success">' + record.PurchaseStatus + '</span></div>';
+                        }
+                    }
+                },
+                {
+                    field: "PaymentStatus", width: 75, title: "Payment", sortable: true, renderer: function (value, record) {
+                        if (record.PaymentStatus == "Paid") {
+                            return '<div class="text-center"><span class="badge badge-success">' + record.PaymentStatus + '</span></div>';
+                        }
+                        else if (record.PaymentStatus == "Due") {
+                            return '<div class="text-center"><span class="badge badge-info">' + record.PaymentStatus + '</span></div>';
+                        }
+                        else if (record.PaymentStatus == "Partial") {
+                            return '<div class="text-center"><span class="badge badge-warning">' + record.PaymentStatus + '</span></div>';
+                        }
+                        else {
+                            return '';
+                        }
+                    }
+                },
+                { field: "TotalAmount", width: 55, title: "Total", sortable: true, align: "right" },
+                { field: "PaidAmount", width: 55, title: "Paid", sortable: true, align: "right" },
+                {
+                    field: "BalanceAmount", width: 55, title: "Balance", sortable: true, align: "right", renderer: function (value, record) {
+                        var tot1amt, paid1amt, bal1amt = 0;
+                        if (record.TotalAmount) { tot1amt = parseFloat(record.TotalAmount); } else { tot1amt = 0; }
+                        if (record.PaidAmount) { paid1amt = parseFloat(record.PaidAmount); } else { paid1amt = 0; }
+
+                        bal1amt = tot1amt - paid1amt;
+                        return bal1amt;
+                    }
+                },
+                { field: "Parts", width: 125, title: "Parts", sortable: false, align: "left" },
+                { field: "Items", width: 165, title: "Items", sortable: false, align: "left" },
+
+            ],
+            //pager: { limit: GridRowsDisplayLimit }
+            pager: { enable: true, limit: 50, sizes: ArrPaging }
+        });
+
+        GrdPurchaseBalance.on('dataBound', function (e, records, totalRecords) {
+            var ordtot = 0, purtot = 0, stktot = 0, disamt = 0, $tfoot;
+            // Remove the formatting to get integer data for summation
+            var intVal = function (i) {
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '') * 1 :
+                    typeof i === 'number' ?
+                        i : 0;
+            };
+
+            $.each(records, function () {
+                ordtot += intVal(this.TotalAmount);
+                purtot += intVal(this.PaidAmount);
+                if(this.PaymentStatus == "Partial"){ disamt += intVal(this.TotalAmount) - intVal(this.PaidAmount); }
+            });
+            stktot += ordtot - purtot - disamt;
+            $tfoot = GrdPurchaseBalance.children('tfoot');
+            $tfoot.children('tr[data-role="summary"]').remove();
+            $tfoot.prepend('<tr data-role="summary" style="text-align:right"><th>Total</th><th></th><th></th><th></th><th></th><th></th><th>' + ordtot.toFixed(2) + '</th><th>' + purtot.toFixed(2) + '</th><th>' + stktot.toFixed(2) + '</th></tr>');
+        });
+
+
+        $('#btnPayment').click(function () {
+
+            var dataPurchased = GrdPurchaseBalance.getAll();
+            $("#btnPayment").attr("disabled", "true");
+            console.log(dataPurchased);
+            for (var i = 1; i <= dataPurchased.length; i++) {
+                var Recorddata = GrdPurchaseBalance.get(i);
+               
+                console.log(Recorddata);
+                console.log(Recorddata.IsChecked);
+                if (Recorddata.IsChecked) {
+                    console.log(Recorddata.PurchaseID);
+                    console.log(Recorddata.BalanceAmount);
+
+                    var ObjfrmPurchasePayment = {
+                        PurchaseID: Recorddata.PurchaseID,
+                        PaidAmount: Recorddata.BalanceAmount,
+                        PaymentBy: "TTS5QKQB0YTL"
+                    };
+
+                    $.ajax({
+                        url: BaseURL + "Purchase/PurchasePayment_Save", type: "POST", data: { objPurchasePayments: ObjfrmPurchasePayment },
+                        success: function (data) {
+                            if (data.Result == true) {
+                                SucessAlert("Successfully updated!");
+                            }
+
+                        }
+                    });
+
+                    break;
+                }
+
+            }
+
+             GrdPurchaseBalance.reload();
+             $("#btnPayment").removeAttr("disabled");
+
+
+
+            //if (FormValidate()) {
+            //    $("#btnPaymentAdd").attr("disabled", "true");
+            //    var ObjfrmPurchasePayment = {
+            //        PurchaseID: $('#HdnPurchaseID').val(),
+            //        PaidAmount: $('#TxtAmount').val(),
+            //        PaymentBy: $('#DdlPaymentMode').val()
+            //    };
+
+            //    $.ajax({
+            //        url: BaseURL + "Purchase/PurchasePayment_Save", type: "POST", data: { objPurchasePayments: ObjfrmPurchasePayment },
+            //        success: function (data) {
+            //            if (data.Result == true) {
+            //                PaymentClear();
+            //                GrdPayment.reload();
+            //                GrdPurchaseBalance.reload();
+            //                $("#btnPaymentAdd").removeAttr("disabled");
+            //                SucessAlert(data.Message);
+            //                $('#myModalPayment').modal('hide');
+            //            }
+
+            //        }
+            //    });
+
+            //}
+
+        });
+
+        //Search functions
+
+        function PurchaseSearch() {
+            var SearchRequestedBy = '';
+
+            if ($("#ddlRequestedBy").val() != "") {
+                SearchRequestedBy = $("#ddlRequestedBy").val();
+            }
+
+            GrdPurchaseBalance.clear();
+            GrdPurchaseBalance.reload({ RequestedBy: SearchRequestedBy, fromDate: $('#TxtFromDate').val(), toDate: $('#TxtToDate').val() });
+
+        }
+
+        //Search filter methods
+        $('#btnPurchaseSearch').click(function () {
+            PurchaseSearch();
+        });
+
+        $('#btnPurchaseSearchClear').click(function () {
+            $("#ddlRequestedBy").val("");
+            $("#TxtFromDate").val("");
+            $("#TxtToDate").val("");
+            GrdPurchaseBalance.reload({ RequestedBy: $("#ddlRequestedBy").val() });
+
+        });
+
+        $(document).ready(function () {
+             var RequestedBy, fromDate, toDate;
+
+            if ("@SessionExpire.GetRequestedBy()" != "0") {
+                RequestedBy = "@SessionExpire.GetRequestedBy()";
+            }
+            if ("@SessionExpire.GetfromDate()" != null) {
+                fromDate = "@SessionExpire.GetfromDate()";
+            }
+            if ("@SessionExpire.GettoDate()" != null) {
+                toDate = "@SessionExpire.GettoDate()";
+            }
+
+            selectElement('ddlRequestedBy', 2);
+            $('#TxtFromDate').val(fromDate);
+            $('#TxtToDate').val(toDate);
+
+            GrdPurchaseBalance.clear();
+            GrdPurchaseBalance.reload({ RequestedBy: RequestedBy, fromDate: fromDate, toDate: toDate });
+
+        });
+
+        function selectElement(id, valueToSelect) {
+            let element = document.getElementById(id);
+            element.value = valueToSelect;
+        }
+    </script>
+
+    <style>
+        ul.ui-autocomplete {
+            z-index: 1100;
+        }
+    </style>
+</head>
+<body>
+   
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content">
+        <!-- Content Header (Page header) -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-pd">
+
+                        <div class="card-header">
+                            <span style="font-size: 18px;" class="m-0"><i class="fa fa-random"></i></span>
+                            <span style="font-size: 18px; border-left: 1px solid #ccc; padding-left: 10px;"> Sales</span>
+                            <div style="float: right;">
+                              
+                                <button onclick="GrdPurchaseBalance.downloadCSV()" class="gj-button-md">Download Data</button>
+                                <span style="border-left: 1px solid #ccc; padding-left: 15px; padding-right: 15px;">
+                                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="Show Form" onclick="showForm()"><i class="fas fa-caret-square-down"></i></a>
+                                </span><span style="border-left: 1px solid #ccc; padding-left: 15px; padding-right: 15px;">
+                                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="Hide Form" onclick="hideForm()"><i class="fas fa-caret-square-up"></i></a>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div id="hidden-form">
+                                <div class="row">
+
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Requested By</label>
+                                            <div>
+                                                @Html.DropDownList("ddlRequestedBy", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @width = "100%" })
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label class="control-label">From</label>
+                                            <div>
+                                                <input type="text" id="TxtFromDate" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>To</label>
+                                            <div>
+                                                <input type="text" id="TxtToDate" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="pdt-25">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnPurchaseSearch" class="btn btn-primary btn-block"><i class="fa fa-search"></i> @SparePro.Repository.WEBPAGEBUTTON.SEARCH</button>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnPurchaseSearchClear" class="btn btn-primary btn-block"><i class="fa fa-paint-brush"></i> @SparePro.Repository.WEBPAGEBUTTON.CLEAR</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                       
+                                        <div>
+                                            <button type="button" id="btnPayment" class="btn btn-primary btn-block"><i class="fa fa-paint-brush"></i> PAID</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="row">
+
+                                <div class="col-lg-12">
+                                    <div class="box-body table-responsive no-padding">
+                                        <table id="GrdPurchaseBalance" class="table table-hover"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div><!-- /.content-wrapper -->
+        </div>
+    </div>
+
+
+
+</body>

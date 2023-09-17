@@ -1,0 +1,205 @@
+﻿
+@using SparePro.Repository.Resource;
+
+@{
+    Layout = "";
+}
+ 
+<head>
+    
+    <script>
+        
+
+        populateYearDropdown();
+        populateMonthDropdown();
+
+        function populateYearDropdown() {
+
+            //Determine the Current Year.
+            const currentYear = new Date().getFullYear();
+            $("#DdlYear option").remove();
+
+            for (let i = currentYear; i >= 2022; i--) {
+                $('#DdlYear').append('<option value="' + i + '">' + i + '</option>');
+            }
+
+        }
+
+        function populateMonthDropdown() {
+            const monthNames = [
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December",
+            ];
+            $("#DdlMonth option").remove();
+            //Loop and add the Year values to DropDownList.
+            for (let i = 0; i < monthNames.length; i++) {
+                $('#DdlMonth').append('<option value="' + monthNames[i] + '">' + monthNames[i] + '</option>');
+            }
+        }
+
+        $.ajax({
+            type: "GET",
+            url: BaseURL + "Common/Load_SystemUserDetail",
+            datatype: "Json",
+            success: function (data) {
+                $("#DdlRequestedBy option").remove();
+                $.each(data, function (index, value) {
+                    $('#DdlRequestedBy').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        });
+
+        GrdPayment = $("#GrdPayment").grid({
+            primaryKey: "ItemDesc",
+            uiLibrary: "bootstrap4",
+            dataSource: '@Url.Action("MonthlyReport_FindAll", "Reports")',
+            columns: [
+                { field: "Year", width: 20, title: "Year", sortable: false, align: "center" },
+                { field: "Month", width: 30, title: "Month", sortable: false, align: "center" },
+                { field: "RequestedBy", width: 125, title: "User", sortable: false, align: "left" },
+                { field: "TotalAmount", width: 55, title: "Total", sortable: true, align: "right" },
+                { field: "PaidAmount", width: 55, title: "Paid", sortable: true, align: "right" },
+                { field: "BalanceAmount", width: 55, title: "Balance", sortable: true, align: "right" }             
+            ],
+            pager: { enable: true, limit: GridRowsDisplayLimit, sizes: ArrPaging }
+        });
+
+        GrdPayment.on('dataBound', function (e, records, totalRecords) {
+            var totamt = 0, paidamt = 0, balamt = 0, $tfoot;
+            // Remove the formatting to get integer data for summation
+            var intVal = function (i) {
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '') * 1 :
+                    typeof i === 'number' ?
+                        i : 0;
+            };
+
+            $.each(records, function () {
+                totamt += intVal(this.TotalAmount);
+                paidamt += intVal(this.PaidAmount);
+                balamt += intVal(this.BalanceAmount);
+            });
+            $tfoot = GrdPayment.children('tfoot');
+            $tfoot.children('tr[data-role="summary"]').remove();
+            $tfoot.prepend('<tr data-role="summary" style="text-align:right"><th></th><th></th><th>Total</th><th>' + totamt.toFixed(2) + '</th><th>' + paidamt.toFixed(2) + '</th><th>' + balamt.toFixed(2) + '</th></tr>');
+        });
+
+        function ItemSearch() {
+            var searchRequestedBy = '';
+            var searchYear = '';
+            var searchMonth = '';
+
+            if ($("#DdlRequestedBy").val() != "") {
+                searchRequestedBy = $('#DdlRequestedBy').val();
+            }
+
+            if ($("#DdlYear").val() != 0) {
+                searchYear = $('#DdlYear').val();
+            }
+
+            if ($("#DdlMonth").val() != "") {
+                searchMonth = $('#DdlMonth').val();
+            }
+
+            GrdPayment.clear();
+            GrdPayment.reload({ RequestedBy: searchRequestedBy, Year: searchYear, Month: searchMonth });
+        }
+
+        //Search filter methods
+        $('#btnPaymentSearch').click(function () {
+            ItemSearch();
+        });
+
+        $('#btnPaymentSearchClear').click(function () {
+            $("#DdlRequestedBy").val("");
+            $("#DdlYear").val("");
+            $("#DdlMonth").val("");
+            GrdPayment.reload({ RequestedBy: null, Year: null, Month: null });
+        });
+
+    </script>
+</head>
+<body>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content">
+        <!-- Content Header (Page header) -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-pd">
+
+                        <div class="card-body">
+                            <div>
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>User</label>
+                                            <div>
+                                                @Html.DropDownList("DdlRequestedBy", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 1, @width = "100%" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>Year</label>
+                                            <div>
+                                                @Html.DropDownList("DdlYear", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 2, @width = "100%" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Month</label>
+                                            <div>
+                                                @Html.DropDownList("DdlMonth", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 3, @width = "100%" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="pdt-25">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnPaymentSearch" class="btn btn-primary btn-block"><i class="fa fa-search"></i> @SparePro.Repository.WEBPAGEBUTTON.SEARCH</button>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnPaymentSearchClear" class="btn btn-primary btn-block"><i class="fa fa-paint-brush"></i> @SparePro.Repository.WEBPAGEBUTTON.CLEAR</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="box-body table-responsive no-padding">
+                                        <table id="GrdPayment" class="table table-hover"></table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                    </div>
+                </div>
+            </div><!-- /.content-wrapper -->
+        </div>
+    </div>
+
+    
+
+</body>
+
+    

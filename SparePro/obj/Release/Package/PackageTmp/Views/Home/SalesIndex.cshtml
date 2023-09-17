@@ -1,0 +1,233 @@
+﻿
+@using SparePro.Repository.Resource;
+
+@{
+    ViewBag.Title = @PROTitle.Title_UserMasterDetail;
+}
+<script src="~/Content/POSStyle/plugins/chart.js/Chart.js"></script>
+<script src="~/Content/POSStyle/plugins/flot/jquery.flot.js"></script>
+<script src="~/Content/POSStyle/plugins/flot-old/jquery.flot.resize.js"></script>
+<script src="~/Content/POSStyle/plugins/flot-old/jquery.flot.pie.js"></script>
+<style type="text/css">
+    .glyphicon {
+        margin-right: 5px;
+    }
+
+    .thumbnail {
+        margin-bottom: 10px;
+        padding: 0px;
+        -webkit-border-radius: 0px;
+        -moz-border-radius: 0px;
+        border-radius: 0px;
+    }
+
+    .item.list-group-item {
+        float: none;
+        width: 100%;
+        background-color: #fff;
+        margin-bottom: 10px;
+    }
+
+        .item.list-group-item:nth-of-type(odd):hover, .item.list-group-item:hover {
+            background: #428bca;
+        }
+
+        .item.list-group-item .list-group-image {
+            margin-right: 10px;
+        }
+
+        .item.list-group-item .thumbnail {
+            margin-bottom: 0px;
+        }
+
+        .item.list-group-item .caption {
+            padding: 3px 3px 0px 3px;
+        }
+
+        .item.list-group-item:nth-of-type(odd) {
+            background: #eeeeee;
+        }
+
+        .item.list-group-item:before, .item.list-group-item:after {
+            display: table;
+            content: " ";
+        }
+
+        .item.list-group-item img {
+            float: left;
+        }
+
+        .item.list-group-item:after {
+            clear: both;
+        }
+
+    .list-group-item-text {
+        margin: 0 0 11px;
+    }
+</style>
+<script>
+
+    ShowCommonBack();
+
+    document.onkeydown = function (evt) {
+        var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
+        if (keyCode == 13) {
+            SubCategorySearch();
+            return false;
+        }
+    }
+
+    $.ajax({
+        type: "GET",
+        url: BaseURL + "Common/Load_Brand",
+        datatype: "Json",
+        success: function (data) {
+            $("#DdlBrand option").remove();
+            $.each(data, function (index, value) {
+                $('#DdlBrand').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+            });
+        }
+    }).done(function (result) {
+
+    });
+
+    $.ajax({
+        type: "GET",
+        url: BaseURL + "Common/Load_Part",
+        datatype: "Json",
+        success: function (data) {
+            $("#DdlPart option").remove();
+            $.each(data, function (index, value) {
+                $('#DdlPart').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+            });
+        }
+    }).done(function (result) {
+
+    });
+
+    $(document).ready(function () {
+
+
+    });
+
+</script>
+
+<div class="container-fluid" id="container-wrapper">
+    <div class="d-sm-flex align-items-center justify-content-between">
+        <h1 class="h5 mb-0 text-gray-800">
+            <i class="fas fa-fw fa-tachometer-alt"></i> Order Mobile accessories LCD, Battery etc..
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="./">@SYSPageModel.Index_Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@SYSPageModel.Index_DashBoard</li>
+        </ol>
+    </div>
+
+    <div class="content">
+        <!-- Content Header (Page header) -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+
+                        <div class="card-body">
+                            <div>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>Brand Name</label>
+                                            <div>
+                                                @Html.DropDownList("DdlBrand", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 1, @width = "100%" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Part Name</label>
+                                            @Html.DropDownList("DdlPart", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 1, @width = "100%" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Item Name</label>
+                                            <div>
+                                                <input type="text" tabindex="2" id="TxtSearchItemName" maxlength="200" placeholder="Search for Models" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="pdt-25">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnItemSearch" class="btn btn-primary btn-block"><i class="fa fa-search"></i> @SparePro.Repository.WEBPAGEBUTTON.SEARCH</button>
+                                                </div>
+                                                <div class="col-sm-6" style="display:none">
+                                                    <button type="button" id="btnItemClear" class="btn btn-primary btn-block"><i class="fa fa-paint-brush"></i> @SparePro.Repository.WEBPAGEBUTTON.CLEAR</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="card-body">
+                            <div id="DivProductView"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!---Container Fluid-->
+<br />
+<script>
+    function ProductLoad() {
+
+        $('#DivProductView').html("");
+
+        $.ajax({
+            type: "GET",
+            data: { BrandID: $('#DdlBrand').val(), PartID: $('#DdlPart').val(), Item: $('#TxtSearchItemName').val(), Status: 1 },
+            url: '@Url.Action("ItemMaster_FindAll", "ProjectMaster")',
+            success: function (Datas) {
+                //$("#HtnTotalRecords").val(Math.ceil((Datas.total / PageLimit)));
+                var Product = '<div class="row">';
+
+                $.each(Datas.records, function (i, Data) {
+                    if (!isNaN(Data.ItemPrice)) {
+                        ItemPrice = '$' + parseFloat(Data.ItemPrice).toFixed(2);
+                    }
+                    else {
+                        ItemPrice = 0;
+                    }
+
+                    Product += '<div class="col-sm-2" style="border:0.5px solid">' + '<p style="font-size:0.9rem;font-weight:bold">' + Data.ItemName + '</p>';
+                    Product += '<div class="row"><div class="col-sm-12"><p class="badge badge-success" >' + ItemPrice + '</p>';
+                    if (Data.InStock) { Product += '&nbsp;&nbsp;&nbsp;<p class="badge badge-info"></p></div></div></div>'; }
+                    else { Product += '&nbsp;&nbsp;&nbsp;<p class="badge badge-secondary" ></p></div></div></div>'; }
+
+                   
+                });
+                Product += "</div>";
+                $('#DivProductView').append(Product);
+
+            }
+        });
+    }
+
+    //Search filter methods
+    $('#btnItemSearch').click(function () {
+        ProductLoad();
+    });
+
+    $("#TxtSearchItemName").on('change keyup paste', function () {
+        ProductLoad();
+    });
+</script>

@@ -1,0 +1,334 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="SpareProModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="TblAccPaymentDetails">
+    <Key>
+      <PropertyRef Name="AccPaymentID" />
+    </Key>
+    <Property Name="AccPaymentID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PaymentDate" Type="datetime" />
+    <Property Name="PaymentBy" Type="varchar" MaxLength="20" />
+    <Property Name="PaidBy" Type="int" Nullable="false" />
+    <Property Name="PaymentAmount" Type="float" />
+  </EntityType>
+  <EntityType Name="TblBrandMaster">
+    <Key>
+      <PropertyRef Name="BrandID" />
+    </Key>
+    <Property Name="BrandID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="BrandName" Type="nvarchar" MaxLength="200" />
+    <Property Name="BrandImage" Type="image" />
+    <Property Name="SortOrder" Type="int" />
+    <Property Name="Status" Type="bit" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="TblDefaultMasterDetail">
+    <Key>
+      <PropertyRef Name="DefaultDetailID" />
+    </Key>
+    <Property Name="DefaultDetailID" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="DefaultHeaderID" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="DefaultTextField" Type="nvarchar" MaxLength="200" />
+    <Property Name="DefaultValueField" Type="nvarchar" MaxLength="200" />
+    <Property Name="Image" Type="image" />
+    <Property Name="DefaultOrder" Type="int" />
+    <Property Name="IsSearch" Type="bit" />
+    <Property Name="IsPage" Type="bit" />
+    <Property Name="Status" Type="bit" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="TblDefaultMasterHeader">
+    <Key>
+      <PropertyRef Name="DefaultHeaderID" />
+    </Key>
+    <Property Name="DefaultHeaderID" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="DefaultHeaderName" Type="nvarchar" MaxLength="200" Nullable="false" />
+    <Property Name="IsTextValue" Type="bit" />
+    <Property Name="SystemType" Type="nvarchar" MaxLength="50" />
+    <Property Name="IsImage" Type="bit" />
+    <Property Name="DefaultOrder" Type="int" />
+    <Property Name="Status" Type="bit" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="TblHomePage">
+    <Key>
+      <PropertyRef Name="HomePageViewID" />
+    </Key>
+    <Property Name="HomePageViewID" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="HomePageName" Type="varchar" MaxLength="100" />
+    <Property Name="ControllerName" Type="varchar" MaxLength="50" />
+    <Property Name="ActionName" Type="varchar" MaxLength="50" />
+    <Property Name="Status" Type="bit" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="TblItemMaster">
+    <Key>
+      <PropertyRef Name="ItemID" />
+    </Key>
+    <Property Name="ItemID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="BrandID" Type="bigint" Nullable="false" />
+    <Property Name="PartID" Type="bigint" Nullable="false" />
+    <Property Name="ItemName" Type="nvarchar" MaxLength="200" />
+    <Property Name="ItemPrice" Type="decimal" Precision="18" Scale="3" />
+    <Property Name="InStock" Type="bit" />
+    <Property Name="SortOrder" Type="int" />
+    <Property Name="Status" Type="bit" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="TblMenuMasterDetail">
+    <Key>
+      <PropertyRef Name="DetailViewID" />
+    </Key>
+    <Property Name="DetailViewID" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="HeaderViewID" Type="nvarchar" MaxLength="20" />
+    <Property Name="MenuName" Type="nvarchar" MaxLength="50" />
+    <Property Name="PageUrl" Type="nvarchar" MaxLength="100" />
+    <Property Name="IconCls" Type="nvarchar" MaxLength="100" />
+    <Property Name="Disabled" Type="bit" />
+    <Property Name="OrderByTab" Type="int" />
+    <Property Name="IsPageAccess" Type="bit" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="TblMenuMasterHeader">
+    <Key>
+      <PropertyRef Name="HeaderViewID" />
+    </Key>
+    <Property Name="HeaderViewID" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="MenuName" Type="nvarchar" MaxLength="50" />
+    <Property Name="Disabled" Type="bit" />
+    <Property Name="OrderByTab" Type="int" />
+    <Property Name="IconCls" Type="nvarchar" MaxLength="200" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="TblMenuRoleMatrixAccess">
+    <Key>
+      <PropertyRef Name="RoleMatrixAccessID" />
+    </Key>
+    <Property Name="RoleMatrixAccessID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="RoleID" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="HeaderViewID" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="DetailViewID" Type="nvarchar" MaxLength="50" />
+    <Property Name="DisplayOrder" Type="int" />
+    <Property Name="IsPageAccess" Type="bit" />
+    <Property Name="Status" Type="bit" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="TblOrderDetails">
+    <Key>
+      <PropertyRef Name="OrderDetailID" />
+    </Key>
+    <Property Name="OrderDetailID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="OrderID" Type="bigint" Nullable="false" />
+    <Property Name="BrandID" Type="bigint" Nullable="false" />
+    <Property Name="PartID" Type="bigint" Nullable="false" />
+    <Property Name="ItemID" Type="bigint" Nullable="false" />
+    <Property Name="Qty" Type="float" />
+    <Property Name="Color" Type="varchar" MaxLength="10" />
+    <Property Name="ItemPrice" Type="decimal" Precision="25" Scale="4" />
+    <Property Name="TotalAmount" Type="decimal" Precision="25" Scale="4" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="TblOrders">
+    <Key>
+      <PropertyRef Name="OrderID" />
+    </Key>
+    <Property Name="OrderID" Type="bigint" Nullable="false" />
+    <Property Name="OrderDate" Type="datetime" />
+    <Property Name="TotalAmount" Type="decimal" Precision="25" Scale="4" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="TblPartMaster">
+    <Key>
+      <PropertyRef Name="PartID" />
+    </Key>
+    <Property Name="PartID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PartName" Type="nvarchar" MaxLength="200" />
+    <Property Name="SortOrder" Type="int" />
+    <Property Name="Status" Type="bit" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="TblPaymentDetails">
+    <Key>
+      <PropertyRef Name="PurchasePaymentID" />
+    </Key>
+    <Property Name="PurchasePaymentID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PurchaseID" Type="bigint" Nullable="false" />
+    <Property Name="PaymentDate" Type="datetime" />
+    <Property Name="PaymentBy" Type="varchar" MaxLength="20" />
+    <Property Name="PaymentStatus" Type="varchar" MaxLength="20" />
+    <Property Name="PaymentAmount" Type="float" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="TblPurchaseDetails">
+    <Key>
+      <PropertyRef Name="PurchaseDetailID" />
+    </Key>
+    <Property Name="PurchaseDetailID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PurchaseID" Type="bigint" Nullable="false" />
+    <Property Name="BrandID" Type="bigint" Nullable="false" />
+    <Property Name="PartID" Type="bigint" Nullable="false" />
+    <Property Name="ItemID" Type="bigint" Nullable="false" />
+    <Property Name="Color" Type="varchar" MaxLength="10" />
+    <Property Name="Qty" Type="float" />
+    <Property Name="ItemPrice" Type="decimal" Precision="25" Scale="4" />
+    <Property Name="TotalAmount" Type="decimal" Precision="25" Scale="4" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="TblPurchases">
+    <Key>
+      <PropertyRef Name="PurchaseID" />
+    </Key>
+    <Property Name="PurchaseID" Type="bigint" Nullable="false" />
+    <Property Name="PurchaseDate" Type="datetime" />
+    <Property Name="PurchaseStatus" Type="nvarchar" MaxLength="50" />
+    <Property Name="PaymentStatus" Type="nvarchar" MaxLength="50" />
+    <Property Name="TotalAmount" Type="decimal" Precision="25" Scale="4" />
+    <Property Name="RequestedBy" Type="int" />
+    <Property Name="Note" Type="nvarchar" MaxLength="500" />
+    <Property Name="Status" Type="bit" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="TblRoleMaster">
+    <Key>
+      <PropertyRef Name="RoleID" />
+    </Key>
+    <Property Name="RoleID" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="RoleName" Type="nvarchar" MaxLength="100" />
+    <Property Name="Description" Type="nvarchar" MaxLength="500" />
+    <Property Name="HomePageViewID" Type="nvarchar" MaxLength="20" />
+    <Property Name="IsPOS" Type="bit" />
+    <Property Name="status" Type="bit" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="TblStock">
+    <Key>
+      <PropertyRef Name="StockID" />
+    </Key>
+    <Property Name="StockID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="BrandID" Type="bigint" Nullable="false" />
+    <Property Name="PartID" Type="bigint" Nullable="false" />
+    <Property Name="ItemID" Type="bigint" Nullable="false" />
+    <Property Name="OrderedQty" Type="float" />
+    <Property Name="SoldQty" Type="float" />
+  </EntityType>
+  <EntityType Name="TblUserMaster">
+    <Key>
+      <PropertyRef Name="UserID" />
+    </Key>
+    <Property Name="UserID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="LoginName" Type="nvarchar" MaxLength="50" />
+    <Property Name="FirstName" Type="nvarchar" MaxLength="100" />
+    <Property Name="LastName" Type="nvarchar" MaxLength="100" />
+    <Property Name="Password" Type="nvarchar" MaxLength="100" />
+    <Property Name="EmailID" Type="nvarchar" MaxLength="200" />
+    <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" />
+    <Property Name="PasswordAttemptCount" Type="int" Nullable="false" />
+    <Property Name="RoleID" Type="nvarchar" MaxLength="50" />
+    <Property Name="Status" Type="bit" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="int" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <Function Name="sp_frm_get_Monthly_Sales_Report" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="RequestedBy" Type="int" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="varchar" Mode="In" />
+  </Function>
+  <Function Name="sp_frm_get_Order_Report" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="RequestedBy" Type="int" Mode="In" />
+    <Parameter Name="fromDate" Type="datetime" Mode="In" />
+    <Parameter Name="toDate" Type="datetime" Mode="In" />
+  </Function>
+  <Function Name="sp_frm_get_Payment_Report" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="RequestedBy" Type="int" Mode="In" />
+    <Parameter Name="fromDate" Type="datetime" Mode="In" />
+    <Parameter Name="toDate" Type="datetime" Mode="In" />
+  </Function>
+  <Function Name="sp_frm_get_Stock_Report" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="BrandID" Type="bigint" Mode="In" />
+    <Parameter Name="PartID" Type="bigint" Mode="In" />
+    <Parameter Name="ItemID" Type="bigint" Mode="In" />
+  </Function>
+  <Function Name="sp_frm_getPurchases" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="RequestedBy" Type="int" Mode="In" />
+    <Parameter Name="CreatedDate" Type="datetime" Mode="In" />
+    <Parameter Name="ItemName" Type="varchar" Mode="In" />
+  </Function>
+  <Function Name="sp_frm_getPurchases_Bkp" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="RequestedBy" Type="int" Mode="In" />
+    <Parameter Name="CreatedDate" Type="datetime" Mode="In" />
+  </Function>
+  <Function Name="sp_frm_getSales" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="RequestedBy" Type="int" Mode="In" />
+    <Parameter Name="fromDate" Type="datetime" Mode="In" />
+    <Parameter Name="toDate" Type="datetime" Mode="In" />
+  </Function>
+  <Function Name="tfn_CoalesceConcatPaymentMode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="nvarchar(max)">
+    <Parameter Name="salesID" Type="bigint" Mode="In" />
+  </Function>
+  <EntityContainer Name="SpareProModelStoreContainer">
+    <EntitySet Name="TblAccPaymentDetails" EntityType="Self.TblAccPaymentDetails" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblBrandMaster" EntityType="Self.TblBrandMaster" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblDefaultMasterDetail" EntityType="Self.TblDefaultMasterDetail" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblDefaultMasterHeader" EntityType="Self.TblDefaultMasterHeader" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblHomePage" EntityType="Self.TblHomePage" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblItemMaster" EntityType="Self.TblItemMaster" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblMenuMasterDetail" EntityType="Self.TblMenuMasterDetail" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblMenuMasterHeader" EntityType="Self.TblMenuMasterHeader" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblMenuRoleMatrixAccess" EntityType="Self.TblMenuRoleMatrixAccess" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblOrderDetails" EntityType="Self.TblOrderDetails" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblOrders" EntityType="Self.TblOrders" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblPartMaster" EntityType="Self.TblPartMaster" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblPaymentDetails" EntityType="Self.TblPaymentDetails" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblPurchaseDetails" EntityType="Self.TblPurchaseDetails" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblPurchases" EntityType="Self.TblPurchases" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblRoleMaster" EntityType="Self.TblRoleMaster" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblStock" EntityType="Self.TblStock" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TblUserMaster" EntityType="Self.TblUserMaster" Schema="dbo" store:Type="Tables" />
+  </EntityContainer>
+</Schema>

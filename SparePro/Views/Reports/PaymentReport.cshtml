@@ -1,0 +1,195 @@
+﻿
+@using SparePro.Repository.Resource;
+
+@{
+    Layout = "";
+}
+ 
+<head>
+    
+    <script>
+
+        $("#TxtFromDate").datepicker({
+            format: Common_Date_Format, autoclose: true, uiLibrary: 'bootstrap4', iconsLibrary: 'fontawesome', size: 'small'
+        });
+
+        $("#TxtToDate").datepicker({
+            format: Common_Date_Format, autoclose: true, uiLibrary: 'bootstrap4', iconsLibrary: 'fontawesome', size: 'small'
+        });
+
+        $.ajax({
+            type: "GET",
+            url: BaseURL + "Common/Load_SystemUserDetail",
+            datatype: "Json",
+            success: function (data) {
+                $("#DdlRequestedBy option").remove();
+                $.each(data, function (index, value) {
+                    $('#DdlRequestedBy').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        });
+
+        $(document).ready(function () {
+            
+
+        });
+
+        GrdPayment = $("#GrdPayment").grid({
+            primaryKey: "ItemDesc",
+            uiLibrary: "bootstrap4",
+            dataSource: '@Url.Action("Payment_FindAll", "Reports")',
+            columns: [
+                { field: "CreatedDate", width: 30, title: "Date", sortable: false, align: "center" },
+                { field: "RequestedBy", width: 125, title: "User", sortable: false, align: "left" },
+                { field: "TotalAmount", width: 55, title: "Total", sortable: true, align: "right" },
+                { field: "PaidAmount", width: 55, title: "Paid", sortable: true, align: "right" },
+                { field: "BalanceAmount", width: 55, title: "Balance", sortable: true, align: "right" },                
+                {
+                    field: "PaymentStatus", width: 75, title: "Payment", sortable: true, renderer: function (value, record) {
+                        if (record.PaymentStatus == "Paid") {
+                            return '<div class="text-center"><span class="badge badge-success">' + record.PaymentStatus + '</span></div>';
+                        }
+                        else if (record.PaymentStatus == "Due") {
+                            return '<div class="text-center"><span class="badge badge-info">' + record.PaymentStatus + '</span></div>';
+                        }
+                        else if (record.PaymentStatus == "Partial") {
+                            return '<div class="text-center"><span class="badge badge-warning">' + record.PaymentStatus + '</span></div>';
+                        }
+                        else {
+                            return '';
+                        }
+                    }
+                }
+            ],
+            pager: { enable: true, limit: GridRowsDisplayLimit, sizes: ArrPaging }
+        });
+
+        GrdPayment.on('dataBound', function (e, records, totalRecords) {
+            var totamt = 0, paidamt = 0, balamt = 0, $tfoot;
+            // Remove the formatting to get integer data for summation
+            var intVal = function (i) {
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '') * 1 :
+                    typeof i === 'number' ?
+                        i : 0;
+            };
+
+            $.each(records, function () {
+                totamt += intVal(this.TotalAmount);
+                paidamt += intVal(this.PaidAmount);
+                balamt += intVal(this.BalanceAmount);
+            });
+            $tfoot = GrdPayment.children('tfoot');
+            $tfoot.children('tr[data-role="summary"]').remove();
+            $tfoot.prepend('<tr data-role="summary" style="text-align:right"><th></th><th>Total</th><th>' + totamt.toFixed(2) + '</th><th>' + paidamt.toFixed(2) + '</th><th>' + balamt.toFixed(2) + '</th><th></th></tr>');
+        });
+
+        function ItemSearch() {
+            var searchRequestedBy = '';
+            var searchFromDate = '';
+            var searchToDate = '';
+
+            if ($("#DdlRequestedBy").val() != "") {
+                searchRequestedBy = $('#DdlRequestedBy').val();
+            }
+
+            if ($("#TxtFromDate").val() != 0) {
+                searchFromDate = $('#TxtFromDate').val();
+            }
+
+            if ($("#TxtToDate").val() != "") {
+                searchToDate = $('#TxtToDate').val();
+            }
+
+            GrdPayment.clear();
+            GrdPayment.reload({ RequestedBy: searchRequestedBy, fromDate: searchFromDate, toDate: searchToDate });
+        }
+
+        //Search filter methods
+        $('#btnPaymentSearch').click(function () {
+            ItemSearch();
+        });
+
+        $('#btnPaymentSearchClear').click(function () {
+            $("#DdlRequestedBy").val("");
+            $("#TxtFromDate").val("");
+            $("#TxtToDate").val("");
+
+            GrdPayment.reload({ RequestedBy: null, fromDate: null, toDate: null });
+        });
+
+    </script>
+</head>
+<body>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content">
+        <!-- Content Header (Page header) -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-pd">
+
+                        <div class="card-body">
+                            <div>
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>User</label>
+                                            <div>
+                                                @Html.DropDownList("DdlRequestedBy", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 1, @width = "100%" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label class="control-label">From</label>
+                                            <div>
+                                                <input type="text" id="TxtFromDate" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>To</label>
+                                            <div>
+                                                <input type="text" id="TxtToDate" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="pdt-25">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnPaymentSearch" class="btn btn-primary btn-block"><i class="fa fa-search"></i> @SparePro.Repository.WEBPAGEBUTTON.SEARCH</button>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnPaymentSearchClear" class="btn btn-primary btn-block"><i class="fa fa-paint-brush"></i> @SparePro.Repository.WEBPAGEBUTTON.CLEAR</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="box-body table-responsive no-padding">
+                                        <table id="GrdPayment" class="table table-hover"></table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                    </div>
+                </div>
+            </div><!-- /.content-wrapper -->
+        </div>
+    </div>
+
+    
+
+</body>
+
+    

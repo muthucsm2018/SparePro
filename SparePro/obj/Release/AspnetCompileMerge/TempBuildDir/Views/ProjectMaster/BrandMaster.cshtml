@@ -1,0 +1,280 @@
+﻿@using SparePro.Repository.Resource;
+@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        ShowCommonBack();
+        var GrdBrandMaster;
+        var BrandStatus;
+       
+        LoadStatus(0);
+       
+
+        function LoadStatus(BrandStatus) {
+
+            $.ajax({
+                type: "GET",
+                url: BaseURL + "Common/Load_Status",
+                datatype: "Json",
+                success: function (data) {
+                    $("#DdlsearchBrandStatus option").remove();
+                    $.each(data, function (index, value) {
+                        $('#DdlsearchBrandStatus').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            }).done(function (result) {
+                if (BrandStatus == 0 || BrandStatus == 1) {
+                    $("#DdlsearchBrandStatus").val(BrandStatus);
+                }
+                else {
+                    $("#DdlsearchBrandStatus").val(-1);
+                }
+            });
+        }
+
+        renderer = function (value, record, $cell, $displayEl, id) {
+
+            var HTMLContent = '<table style=width:100%><tr>';
+                HTMLContent += '<td style="border:0px solid #FFF;"><a tabindex="-1" onclick="EditBrand(' + id + ')" style="cursor:pointer"><i class="fas fa-edit Form-GridEditButton"></i></a></td>';
+                HTMLContent += '<td style="border:0px solid #FFF;"><a tabindex="-1" onclick="DeleteBrand(' + id + ')" style="cursor:pointer"><i class="far fa-trash-alt Form-GridDeleteButton"></i></a></td>';
+            $displayEl.html("</tr></table>");
+            $displayEl.append(HTMLContent);
+
+        }
+        var tstamp = (new Date()).getTime();
+
+         GrdBrandMaster = $("#GrdBrandMaster").grid({
+            primaryKey: "BrandID",
+            uiLibrary: "bootstrap4",
+            autoLoad: true,
+            dataSource: '@Url.Action("BrandMaster_FindAll", "ProjectMaster")',
+            columns: [
+                    {
+                    field: 'BrandID', title: "@PROPageModel.Common_Image", width: 75, align: "center", editor: false, sortable: true, renderer: function (value, record) {
+                            return "<img style=width:60px;height:60px src=\"@Url.Action("GetBrandImage", "ProjectMaster")?BrandID=" + record.BrandID + "&CurrentTime=" + tstamp+ "\">";
+                        }
+                    },
+                    { field: "BrandName", title: "@PROPageModel.BrandMaster_BrandName", sortable: true },
+                    { field: "SortOrder", title: "@PROPageModel.BrandMaster_SortOrder", sortable: true },
+                    { field: '@PROPageModel.Common_Status', width: 75, align: "center", editor: false, sortable: true, renderer: function (value, record) { return record.Status == true ? '<span class="badge badge-success" style=font-size:12px>@Button.Button_Active</span>' : '<span class="badge badge-danger" style=font-size:12px>@Button.Button_Inactive</span>'; } },
+                    { field: '@Button.Button_Action', width: 90, align: "center", renderer: renderer }
+            ]//,
+            //pager: { enable: true, limit: GridRowsDisplayLimit, sizes: ArrPaging }
+         });
+
+        $('#btnAddBrandDetail').click(function () {
+            var ParamData = [
+
+                { ParameterName: "BrandName", ParameterValue: $("#TxtSearchBrandName").val() },
+                { ParameterName: "BrandStatus", ParameterValue: $("#DdlsearchBrandStatus").val() }
+
+            ]
+
+            AddBackURLStore(JSON.stringify(ParamData));
+            if ($("#HdnDashboardCount").val() == 1) {
+                GetMenu('@Url.Action("AddBrandMaster", "ProjectMaster")' + '?BrandID=0');
+            }
+            else {
+                GetMenu('@Url.Action("AddBrandMaster", "ProjectMaster")' + '?BrandID=0' + '&HeaderViewID=' + GetParamValue("HeaderViewID") + '&DetailViewID=' + GetParamValue("DetailViewID"));
+            }
+        });
+
+
+
+
+        function EditBrand(BrandID) {
+            var ParamData = [
+
+                { ParameterName: "BrandName", ParameterValue: $("#TxtSearchBrandName").val() },
+                { ParameterName: "BrandStatus", ParameterValue: $("#DdlsearchBrandStatus").val() }
+
+            ]
+
+            AddBackURLStore(JSON.stringify(ParamData));
+            if ($("#HdnDashboardCount").val() == 1) {
+                GetMenu('@Url.Action("AddBrandMaster", "ProjectMaster")' + '?BrandID=' + BrandID);
+            }
+            else {
+
+                GetMenu('@Url.Action("AddBrandMaster", "ProjectMaster")' + '?BrandID=' + BrandID + '&HeaderViewID=' + GetParamValue("HeaderViewID") + '&DetailViewID=' + GetParamValue("DetailViewID"));
+            }
+        }
+
+        function DeleteBrand(BrandID) {
+
+                $.confirm({
+                    title: ConfirmAlert_SuccessMessage,
+                    content: ConfirmAlert_Message_Content.replace("{0}", ConfirmAlert_InactivateMessage_Content),
+                    animation: 'zoom',
+                    closeAnimation: 'zoom',
+                    buttons: {
+                        'confirm': {
+                            text: Alert_YesMessage,
+                            btnClass: Alert_Button_Style,
+                            action: function () {
+                                $.ajax({ url: BaseURL + "ProjectMaster/BrandMaster_Delete", type: "POST", data: { BrandID: BrandID } })
+                                    .done(function (result) {
+                                        if (result.Result == true) {
+                                            GrdBrandMaster.reload();
+                                            SucessAlert(result.Message);
+                                        }
+                                        else {
+                                            ErrorAlert(result.Message);
+                                        }
+                                    })
+                                    .fail(function () {
+                                        ErrorAlert(result.Message);
+                                    });
+                            }
+                        },
+                        cancel: {
+                            text: Alert_NoMessage,
+                            btnClass: Alert_Button_Style
+                        }
+                    }
+                });
+         }
+
+
+
+        //Search filter methods
+        $("#btnBrandSearch").click(function () {
+            var searchBrandName = '';
+           
+            var BrandStatus = null;
+
+            searchBrandName = $('#TxtSearchBrandName').val();
+
+          
+
+            if ($("#DdlsearchBrandStatus").val() == 0) {
+                BrandStatus = false;
+            }
+            else if ($("#DdlsearchBrandStatus").val() == 1) {
+                BrandStatus = true;
+            }
+
+            GrdBrandMaster.reload({ BrandName: searchBrandName, Status: BrandStatus });
+
+
+        });
+
+        $("#btnBrandSearchClear").click(function () {
+           
+            $("#TxtSearchBrandName").val("");
+            $("#DdlsearchBrandStatus").val(-1);
+            GrdBrandMaster.reload({ BrandName: '', Status: null });
+        });
+
+
+    </script>
+
+</head>
+<body>
+    <input type="hidden" id="HtnBrandUniqID" value="0" />
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content">
+        <!-- Content Header (Page header) -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-pd">
+
+                        <div class="card-header">
+                            <span style="font-size: 18px;" class="m-0"><i class="fa fa-cubes"></i></span>
+                            <span style="font-size: 18px; border-left: 1px solid #ccc; padding-left: 10px;"> @PROTitle.Title_BrandMasterView  </span>
+                            <div style="float: right;">
+                                <span style="border-left: 1px solid #ccc; padding-left: 15px; padding-right: 15px;">
+                                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="Add Brand" id="btnAddBrandDetail"><i class="fas fa-plus-circle"></i> </a>
+                                </span>
+                                <span style="border-left: 1px solid #ccc; padding-left: 15px; padding-right: 15px;">
+                                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="Show Form" onclick="showForm()"><i class="fas fa-caret-square-down"></i></a>
+                                </span><span style="border-left: 1px solid #ccc; padding-left: 15px; padding-right: 15px;">
+                                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="Hide Form" onclick="hideForm()"><i class="fas fa-caret-square-up"></i></a>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- /hidden_div -->
+                            <div id="hidden-form" style="display: none;">
+                                <div class="row">
+                                   
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>@PROPageModel.BrandMaster_BrandName</label>
+                                            <div>
+                                                <input type="text" tabindex="2" id="TxtSearchBrandName"   maxlength="200"  placeholder="@PROPageModel.BrandMaster_BrandName" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>@PROPageModel.Brand_Status</label>
+                                            <div>
+                                                @Html.DropDownList("DdlsearchBrandStatus", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 3, @width = "100%" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="pdt-25">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnBrandSearch" class="btn btn-primary btn-block"><i class="fa fa-search"></i> @SparePro.Repository.WEBPAGEBUTTON.SEARCH</button>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnBrandSearchClear" class="btn btn-primary btn-block"><i class="fa fa-paint-brush"></i> @SparePro.Repository.WEBPAGEBUTTON.CLEAR</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="box-body table-responsive no-padding">
+                                        <table id="GrdBrandMaster" class="table table-hover"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div><!-- /.content-wrapper -->
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        if (ArrParameterData[GetBackURLCount()] != null) {
+
+            var vBrandStatus;
+            if (ArrParameterData[GetBackURLCount()][0].ParameterName == "BrandName") {
+                $('#TxtSearchSupplierName').val(ArrParameterData[0][0].ParameterValue);
+            }
+            if (ArrParameterData[GetBackURLCount()][1].ParameterName == "BrandStatus") {
+                SupplierUserStatus = ArrParameterData[0][1].ParameterValue;
+                $('#DdlsearchSupplierUserStatus').val(SupplierUserStatus);
+                if (BrandStatus == 0) {
+                    vBrandStatus = false;
+                }
+                else if (BrandStatus == 1) {
+                    vBrandStatus = true;
+                }
+            }
+            GrdBrandMaster.reload({ BrandName: $('#TxtSearchBrandName').val(), Status: vBrandStatus });
+        }
+
+
+    </script>
+
+</body>
+</html>
+

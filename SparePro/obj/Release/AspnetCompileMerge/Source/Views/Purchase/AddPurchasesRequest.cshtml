@@ -1,0 +1,718 @@
+﻿@using SparePro.Repository.Resource;
+
+@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script>
+        var BaseURL = "@Url.Content("~/")";
+        $.ajax({
+            type: "GET",
+            url: BaseURL + "Common/Load_Brand",
+            datatype: "Json",
+            success: function (data) {
+                $("#DdlBrand option").remove();
+                $.each(data, function (index, value) {
+                    $('#DdlBrand').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        }).done(function (result) {
+
+        });
+
+        $.ajax({
+            type: "GET",
+            url: BaseURL + "Common/Load_Part",
+            datatype: "Json",
+            success: function (data) {
+                $("#DdlPart option").remove();
+                $.each(data, function (index, value) {
+                    $('#DdlPart').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        }).done(function (result) {
+
+        });
+
+        var vPurchaseDetailsID = 0;
+        ShowCommonBack();
+        //console.log(GetParamValue("PurchaseID"));
+        //console.log(GetParamValue("PurchaseStatus"));
+        if (GetParamValue("PurchaseID") != 0) {
+            if (GetParamValue("PurchaseStatus") == "Cancelled"
+                // || GetParamValue("PurchaseStatus") == "Approved"
+            ) {
+                $('#btnSavePurchases').hide();
+                $('#btnPurchaseReset').hide();
+            }
+        }
+        else {
+            ClearPurchases();
+            $('#btnSavePurchases').show();
+            $('#btnPurchaseReset').show();
+        }
+
+
+        function LoadRequestedBy(RequestedBy) {
+
+            $.ajax({
+                type: "GET",
+                url: BaseURL + "Common/Load_SystemUserDetail",
+                datatype: "Json",
+                success: function (data) {
+                    $("#DdlRequestedBy option").remove();
+                    $.each(data, function (index, value) {
+                        $('#DdlRequestedBy').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            }).done(function (result) {
+
+                if (RequestedBy != 0) {
+                    $("#DdlRequestedBy").val(RequestedBy);
+                }
+                else {
+                    $("#DdlRequestedBy").val(0);
+                }
+            });
+        }
+
+        function LoadPurchaseStatus(PurchaseStatus) {
+
+            $.ajax({
+                type: "GET",
+                url: BaseURL + "Common/Load_DefaultType",
+                datatype: "Json",
+                data: { DefaultType: "@SparePro.Repository.DEFAULTMASTER.DefaultHeaderMaster_PurchaseStatus_ViewID" },
+                success: function (data) {
+                    $("#DdlPurchaseStatus option").remove();
+                    $.each(data, function (index, value) {
+                        $('#DdlPurchaseStatus').append('<option value="' + value.DefaultID + '">' + value.DefaultName + '</option>');
+                    });
+                }
+            }).done(function (result) {
+                if (PurchaseStatus != "") {
+                    $("#DdlPurchaseStatus").val(PurchaseStatus);
+                }
+                else {
+                    $("#DdlPurchaseStatus").val("");
+                }
+            });
+        }
+
+        TxtQty = function (value, record, $cell, $displayEl, id) {
+            var Qty = 0;
+            if (typeof record.Quantity === 'undefined') {
+                Qty = 0;
+            }
+            else {
+                Qty = record.Quantity;
+            }
+
+            var HTMLContent = '<center><input type="number"  tabindex=2 min="0" onkeyup="if(this.value<0){this.value= this.value * -1}" ID="TxtQty_' + record.ItemID + '-' + record.PurchaseDetailsID + '" Name="TxtQty_' + record.ItemID + '-' + record.PurchaseDetailsID + '" style="width:90%" class="form-control"  onchange="SubtotalOnchange(' + id + ',' + record.ItemID + ', ' + record.PurchaseDetailsID + ')" value=' + Qty + '  /></center>';
+            $displayEl.html("");
+            $displayEl.append(HTMLContent);
+
+        }
+
+        function RecalculateTotal() {
+            var vTAmt = parseFloat($("#TxtTotalAmount").text());
+            $("#TxtGrandTotal").text(vTAmt).toFixed(2);
+        }
+
+        function SubtotalOnchange(ID, ItemID, PurchaseDetailsID) {
+
+            var Qty = document.getElementById("TxtQty_" + ItemID + '-' + PurchaseDetailsID).value;
+
+            var data = GrdPurchasedProducts.getById(ID);
+            var ItemPrice = data.ItemPrice;
+
+            var subtot = 0;
+            subtot = parseFloat(Qty) * parseFloat(ItemPrice);
+
+            GrdPurchasedProducts.updateRow(ID, {
+                'PurchaseDetailsID': ID, 'BrandName': data.BrandName, 'PartName': data.PartName, 'ItemName': data.ItemName, 'Quantity': Qty, 'ItemPrice': data.ItemPrice,
+                'TotalAmount': subtot, 'ModeType': data.ModeType, 'ItemID': data.ItemID, 'BrandID': data.BrandID, 'PartID': data.PartID
+            });
+
+            GrdPurchasedProducts.reload();
+        }
+
+        renderer = function (value, record, $cell, $displayEl, id) {
+
+            var HTMLContent = '<table style=width:100%><tr>';
+            HTMLContent += '<td style="border:0px solid #FFF;"><a tabindex="-1" onclick="DeletePurchaseDetail(' + id + ')" style="cursor:pointer"><i class="far fa-trash-alt Form-GridDeleteButton"></i></a></td>';
+
+            $displayEl.html("</tr></table>");
+            $displayEl.append(HTMLContent);
+        }
+        var Template = '<div class="docs-callout"><div class="row" ><div class="col-lg-4"><b>Item:</b> {ItemName}</div><div class="col-lg-4"><b>Brand:</b> {BrandName}</div><div class="col-lg-4"><b>Part:</b> {PartName}</div></div > ';
+
+
+        GrdPurchasedProducts = $("#GrdPurchasedProducts").grid({
+            primaryKey: "PurchaseDetailsID",
+            uiLibrary: "bootstrap4",
+            //detailTemplate: Template,
+            columns: [
+                {
+                    title: 'Brand Name', width: 100, field: "BrandName", align: "left"
+                },
+                {
+                    title: 'Part Name', width: 100, field: "PartName", align: "left"
+                },
+                {
+                    title: 'Item Name', width: 100, field: "ItemName", align: "left"
+                },
+                {
+                    field: "Quantity", width: 40, title: "Qty", renderer: TxtQty
+                },
+                { field: "ItemPrice", width: 50, title: "Price" },
+                { field: "TotalAmount", width: 50, title: "Sub Total" },
+                { field: "PurchaseDetailsID", title: "PurchaseDetailsID", width: 50, hidden: true },
+                { field: "ModeType", title: "@PROPageModel.Purchase_ModeType", width: 10, hidden: true },
+                { field: "BrandID", title: "BrandID", width: 50, hidden: true },
+                { field: "PartID", title: "PartID", width: 50, hidden: true },
+                { field: "ItemID", title: "ItemID", width: 50, hidden: true },
+                { field: '@Button.Button_Action', width: 15, align: "center", renderer: renderer }
+            ]
+        });
+
+        GrdPurchasedProducts.on('dataBound', function (e, records, totalRecords) {
+            var sum = 0;
+            $.each(records, function () {
+                sum += parseFloat(this.TotalAmount);
+            });
+
+            $("#txtGrandTotal").text(sum.toFixed(2));
+
+        });
+
+        function DeletePurchaseDetail(PurchaseID) {
+
+            GrdPurchasedProducts.removeRow(PurchaseID);
+            GrdPurchasedProducts.reload();
+        }
+
+        function IsMinusCheck(dataPurchased) {
+            var IsMinus = false;
+            for (var i = 1; i <= dataPurchased.length; i++) {
+                var Recorddata = GrdPurchasedProducts.get(i);
+                var Qty = document.getElementById("TxtQty_" + Recorddata.ItemID + '-' + Recorddata.PurchaseDetailsID).value;
+
+                if (Math.sign(Qty) <= 0) {
+                    IsMinus = true;
+                    break;
+                }
+
+            }
+
+            return IsMinus;
+        }
+
+        function FormValidate() {
+            var Result = true;
+            var dataPurchased = GrdPurchasedProducts.getAll();
+
+            if ($("#DdlRequestedBy").val() == 0) {
+                ErrorAlert("Please Select Requested By");
+                Result = false;
+                return false
+            }
+
+            if ($("#DdlPurchaseStatus").val() == "" || $("#DdlPurchaseStatus").val() == null) {
+                ErrorAlert("@PROMessage.ErrPurchases_PurchaseStatus");
+                Result = false;
+                return false
+            }
+            if (dataPurchased.length == 0) {
+                ErrorAlert("Please add some products to Purchase");
+                return false
+            }
+            else if (IsMinusCheck(dataPurchased)) {
+                ErrorAlert("Zero/negative value not allowed ");
+                return false
+            }
+
+            return Result;
+        }
+
+        $('#btnSavePurchases').click(function (e) {
+            if ($(this).hasClass("unclickable")) {
+                e.preventDefault();
+            } else {
+
+                var isQtyReceivedHigh = false;
+
+                var dataPurchase = GrdPurchasedProducts.getAll();
+
+                var ArrPurchaseDetail = new Array();
+                for (var i = 1; i <= dataPurchase.length; i++) {
+
+                    var Recorddata = GrdPurchasedProducts.get(i);
+                    var ObjPurchase = new Object();
+
+                    ObjPurchase.BrandID = Recorddata.BrandID;
+                    ObjPurchase.PartID = Recorddata.PartID;
+                    ObjPurchase.ItemID = Recorddata.ItemID;
+                    ObjPurchase.Quantity = Recorddata.Quantity;
+                    ObjPurchase.ItemPrice = Recorddata.ItemPrice;
+                    ObjPurchase.TotalAmount = Recorddata.TotalAmount;
+                    ObjPurchase.ModeType = Recorddata.ModeType;
+
+                    ArrPurchaseDetail[i - 1] = ObjPurchase;
+
+                }
+
+                if (FormValidate(dataPurchase) == true) {
+
+
+                        var fileData = new FormData();
+
+                        fileData.append("PurchaseID", $('#HdnPurchaseID').val());
+                        fileData.append("PurchaseStatus", $('#DdlPurchaseStatus').val());
+                        fileData.append("RequestedBy", $('#DdlRequestedBy').val());
+                        fileData.append("TotalAmount", $("#txtGrandTotal").text());
+                        fileData.append("Note", $("#TxtNote").val());
+
+                        for (i = 0; i < ArrPurchaseDetail.length; i++) {
+                            fileData.append("PurchaseDetail[" + i + "].PurchaseID", $('#HdnPurchaseID').val());
+                            fileData.append("PurchaseDetail[" + i + "].BrandID", ArrPurchaseDetail[i].BrandID);
+                            fileData.append("PurchaseDetail[" + i + "].PartID", ArrPurchaseDetail[i].PartID);
+                            fileData.append("PurchaseDetail[" + i + "].ItemID", ArrPurchaseDetail[i].ItemID);
+                            fileData.append("PurchaseDetail[" + i + "].Quantity", ArrPurchaseDetail[i].Quantity);
+                            fileData.append("PurchaseDetail[" + i + "].ItemPrice", ArrPurchaseDetail[i].ItemPrice);
+                            fileData.append("PurchaseDetail[" + i + "].TotalAmount", ArrPurchaseDetail[i].TotalAmount);
+                            fileData.append("PurchaseDetail[" + i + "].ModeType", ArrPurchaseDetail[i].ModeType);
+
+                        }
+
+                        $.ajax({
+                            url: BaseURL + "Purchase/Purchase_Save", type: "POST",
+                            contentType: false, // Not to set any content header
+                            processData: false,
+                            data: fileData
+
+                        }).done(function (result) {
+                            if (result.Result == true) {
+                                SucessAlert(result.Message);
+                                ClearPurchases();
+                                GetMenu('@Url.Action("ListPurchases", "Purchase")' + '?HeaderViewID=PURCMASTER6 & DetailViewID=18UG35XQZNWT');
+                                //BackFunction();
+                            }
+                            else if (result.Result == false) {
+                                ErrorAlert(result.Message);
+                            }
+                        })
+                            .fail(function (result) {
+                                ErrorAlert(result.Message);
+                            });
+
+
+
+
+                    //$.confirm({
+                    //    title: ConfirmAlert_SuccessMessage,
+                    //    content: GetParamValue("PurchaseID") == 0 ? ConfirmAlert_Message_Content.replace("{0}", ConfirmAlert_SaveMessage_Content) : ConfirmAlert_Message_Content.replace("{0}", ConfirmAlert_UpdateMessage_Content),
+                    //    animation: 'zoom',
+                    //    closeAnimation: 'zoom',
+                    //    buttons: {
+                    //        'confirm': {
+                    //            text: Alert_YesMessage,
+                    //            btnClass: Alert_Button_Style,
+                    //            action: function () {
+
+                    //                var fileData = new FormData();
+
+                    //                fileData.append("PurchaseID", $('#HdnPurchaseID').val());
+                    //                fileData.append("PurchaseStatus", $('#DdlPurchaseStatus').val());
+                    //                fileData.append("RequestedBy", $('#DdlRequestedBy').val());
+                    //                fileData.append("TotalAmount", $("#txtGrandTotal").text());
+                    //                fileData.append("Note", $("#TxtNote").val());
+
+                    //                for (i = 0; i < ArrPurchaseDetail.length; i++) {
+                    //                    fileData.append("PurchaseDetail[" + i + "].PurchaseID", $('#HdnPurchaseID').val());
+                    //                    fileData.append("PurchaseDetail[" + i + "].BrandID", ArrPurchaseDetail[i].BrandID);
+                    //                    fileData.append("PurchaseDetail[" + i + "].PartID", ArrPurchaseDetail[i].PartID);
+                    //                    fileData.append("PurchaseDetail[" + i + "].ItemID", ArrPurchaseDetail[i].ItemID);
+                    //                    fileData.append("PurchaseDetail[" + i + "].Quantity", ArrPurchaseDetail[i].Quantity);
+                    //                    fileData.append("PurchaseDetail[" + i + "].ItemPrice", ArrPurchaseDetail[i].ItemPrice);
+                    //                    fileData.append("PurchaseDetail[" + i + "].TotalAmount", ArrPurchaseDetail[i].TotalAmount);
+                    //                    fileData.append("PurchaseDetail[" + i + "].ModeType", ArrPurchaseDetail[i].ModeType);
+
+                    //                }
+
+                    //                $.ajax({
+                    //                    url: BaseURL + "Purchase/Purchase_Save", type: "POST",
+                    //                    contentType: false, // Not to set any content header
+                    //                    processData: false,
+                    //                    data: fileData
+
+                    //                }).done(function (result) {
+                    //                    if (result.Result == true) {
+                    //                        SucessAlert(result.Message);
+                    //                        ClearPurchases();
+                    //                        BackFunction();
+                    //                    }
+                    //                    else if (result.Result == false) {
+                    //                        ErrorAlert(result.Message);
+                    //                    }
+                    //                })
+                    //                    .fail(function (result) {
+                    //                        ErrorAlert(result.Message);
+                    //                    });
+                    //            }
+
+                    //        },
+                    //        cancel: {
+                    //            text: Alert_NoMessage,
+                    //            btnClass: Alert_Button_Style
+                    //        }
+                    //    }
+                    //});
+                }
+            }
+        });
+
+        $("#btnPurchaseReset").click(function () {
+            if ($(this).hasClass("unclickable")) {
+                e.preventDefault();
+            } else {
+                $(this).addClass("unclickable");
+                ResetPurchase();
+            }
+        });
+
+        function ResetPurchase() {
+            if (GetParamValue("PurchaseID") != 0) {
+                //PurchaseGridClear();
+                EditPurchases();
+            }
+            else {
+                ClearPurchases();
+            }
+        }
+
+        function GeneratePurchaseID() {
+            $.ajax({
+                type: "GET",
+                url: BaseURL + "Purchase/GeneratePurchaseID",
+                datatype: "Json",
+                success: function (data) {
+                    $("#HdnPurchaseID").val(data);
+                    $("#txtPurchaseID").val(data);
+                }
+            });
+        }
+
+        function ClearPurchases() {
+
+            $('#DdlRequestedBy').val(0);
+            $('#txtGrandTotal').text(0);
+
+            //PurchaseGridClear();
+        }
+
+        //function PurchaseGridClear() {
+        //    var ArrPur = new Array();
+
+        //    var dataPur = GrdPurchasedProducts.getAll();
+        //    if (dataPur != null) {
+        //        for (var i = 0; i < dataPur.length; i++) {
+        //            var ObjParam = new Object();
+        //            ObjParam.PurchaseDetailsID = dataPur[i].PurchaseDetailsID;
+        //            ArrPur[i] = ObjParam;
+        //        }
+        //        for (i = 0; i < ArrPur.length; i++) {
+        //            GrdPurchasedProducts.removeRow(ArrPur[i].PurchaseDetailsID);
+        //        }
+        //    }
+        //}
+
+        $('#txtPurchaseDate').datepicker({
+            format: Common_Date_Format, autoclose: true, uiLibrary: 'bootstrap4', iconsLibrary: 'fontawesome', size: 'small', todayHighlight: true
+        });
+
+        $('input[id="txtPurchaseDate"]').val(TodayDateRange);
+
+        function TodayDateRange() {
+            let monthNames = ["Jan", "Feb", "Mar", "Apr",
+                "May", "Jun", "Jul", "Aug",
+                "Sep", "Oct", "Nov", "Dec"];
+
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth(); //January is 0!
+            var yyyy = today.getFullYear();
+
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+
+            let monthName = monthNames[mm];
+
+            return dd + '-' + monthName + '-' + yyyy;
+        }
+
+        $('#ProductSearch').autocomplete({
+            minLength: 1,
+            source: function (request, response) {
+                var product = new Array();
+                $.ajax({
+                    async: false,
+                    cache: false,
+                    type: "POST",
+                    url: "@(Url.Action("Product_PurchaseAutocomplete", "Common"))",
+                    data: { "term": request.term, BrandID: $('#DdlBrand').val(), PartID: $('#DdlPart').val() },
+                    success: function (data) {
+
+                        if (data.records != null) {
+                            if (data.records.length == 0) {
+                                ErrorAlert("No results found!");
+                                Result = false;
+                                return false;
+                            }
+                            else if (data.DistributorID != 0) {
+                                for (var i = 0; i < data.records.length; i++) {
+                                    product[i] = { label: data.records[i].label, Id: data.records[i].id };
+                                }
+                            }
+                        }
+
+                    }
+                });
+                response(product);
+
+            },
+            select: function (event, ui) {
+                $.ajax({
+                    cache: false,
+                    async: false,
+                    type: "POST",
+                    url: "@(Url.Action("Product_GetDetail", "Common"))",
+                    data: { "ItemID": ui.item.Id },
+                    success: function (data) {
+                        if (ISProductCheck(ui.item.Id)) {
+
+                            var vPurchasedetailID = (1000 + (GrdPurchasedProducts.count(true) + 1));
+
+                            GrdPurchasedProducts.addRow({
+                                'PurchaseDetailsID': vPurchasedetailID, 'BrandName': data.BrandName, 'PartName': data.PartName, 'ItemName': data.ItemName, 'ItemPrice': data.ItemPrice, 'Quantity': 0, 'TotalAmount': 0,
+                                'ModeType': 'TP', 'ItemID': data.ItemID, 'BrandID': data.BrandID, 'PartID': data.PartID
+                            });
+
+                            var TxtQty = document.getElementById('TxtQty_' + ui.item.Id + '-' + vPurchasedetailID);
+                            TxtQty.select();
+                        }
+                    }
+                });
+                $(this).val("");
+                return false;
+            }
+
+        });
+
+        function ISProductCheck(ItemID) {
+
+            var Result = true;
+            var dataPayment = GrdPurchasedProducts.getAll();
+            for (var i = 1; i <= dataPayment.length; i++) {
+                var Recorddata = GrdPurchasedProducts.get(i);
+
+                if (Recorddata.ItemID == ItemID) {
+                    Result = false;
+                    break;
+                }
+            }
+            return Result;
+        }
+
+        EditPurchases();
+
+        function EditPurchases() {
+
+            if (GetParamValue("PurchaseID") != 0) {
+
+                $.ajax({
+                    type: "GET",
+                    url: BaseURL + "Purchase/Purchase_Edit",
+                    data: { PurchaseID: GetParamValue("PurchaseID") },
+                    datatype: "Json",
+                    success: function (data) {
+
+                        $("#HdnPurchaseID").val(data.PurchaseID);
+                        $("#txtPurchaseID").val(data.PurchaseID);
+                        $("#TxtNote").val(data.Note);
+                        $("#txtGrandTotal").val(data.TotalAmount);
+                        $("#txtPurchaseDate").val(GetParseJsonDate(data.PurchaseDate));
+                        $("#divdate").hide();
+                        LoadRequestedBy(data.RequestedBy);
+                        LoadPurchaseStatus(data.PurchaseStatus);
+
+                        $.ajax({
+                            type: "GET",
+                            data: { PurchaseID: GetParamValue("PurchaseID") },
+                            url: BaseURL + "Purchase/PurchaseDetail_FindAll",
+                            datatype: "Json",
+                            success: function (data) {
+                                $.each(data.records, function (index, value) {
+                                    GrdPurchasedProducts.addRow({
+                                        'PurchaseDetailsID': value.PurchaseDetailsID, 'BrandName': value.BrandName, 'PartName': value.PartName, 'ItemName': value.ItemName,
+                                        'Quantity': value.Quantity, 'ItemPrice': value.ItemPrice,
+                                        'TotalAmount': value.TotalAmount, 'ModeType': 'DB', 'ItemID': value.ItemID, 'BrandID': value.BrandID, 'PartID': value.PartID
+                                    });
+                                    GrdPurchasedProducts.reload();
+                                });
+                            }
+                        });
+
+                    }
+                });
+            }
+            else {
+                GeneratePurchaseID();
+                LoadRequestedBy('');
+                LoadPurchaseStatus('');
+                $("#divdate").show();
+            }
+        }
+        $('[data-widget="pushmenu"]').PushMenu("collapse");
+    </script>
+</head>
+<body>
+    <input type="hidden" id="HdnPurchaseID">
+   
+    <!-- Main content -->
+    <div class="content" id="contentdiv">
+        <div class="container-fluid">
+            <div class="row">
+
+                <!-- /.col-md-12 -->
+                <div class="col-lg-12">
+                    <div class="card card-pd">
+                        <div class="card-header">
+                            <span style="font-size: 18px;" class="m-0"><i class="fas fa-shipping-fast"></i></span>
+                            <span style="font-size: 18px; border-left: 1px solid #ccc; padding-left: 10px;"> Sales - [Add/Edit] </span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-4" id="divdate" name="divdate">
+                                    <div class="form-group required">
+                                        <label class="control-label">@PROPageModel.Purchases_PurchaseDate</label>
+                                        <input type="text" readonly autocomplete="off" class="form-control" id="txtPurchaseDate" placeholder="@PROPageModel.Purchases_PurchaseDate">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>@PROPageModel.Purchases_PONO</label>
+                                        <input type="text" class="form-control" autocomplete="off" readonly id="txtPurchaseID" name="txtPurchaseID" maxlength="55">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group required">
+                                        <label class="control-label">@PROPageModel.Purchases_PurchaseStatus</label>
+                                        @Html.DropDownList("DdlPurchaseStatus", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @width = "100%" })
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group required">
+                                        <label class="control-label">Requested By</label>
+                                        @Html.DropDownList("DdlRequestedBy", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @width = "100%" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>@PROPageModel.Common_Note</label>
+                                        <textarea class="form-control" autocomplete="off" id="TxtNote" name="TxtNote" maxlength="1000" placeholder="@PROPageModel.Purchases_Placesometexthere"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>Brand Name</label>
+                                        <div>
+                                            @Html.DropDownList("DdlBrand", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 1, @width = "100%" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="control-label">Part Name</label>
+                                        @Html.DropDownList("DdlPart", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 1, @width = "100%" })
+                                    </div>
+                                </div>
+                             </div>
+
+                            <div class="row">
+                                <div class="col-lg-10">
+                                    <div style="padding: 15px; background-color: #f6f6f6;">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" style="font-size: 30px;"><i class="fas fa-barcode"></i></span>
+                                            </div>
+                                            <input type="text" class="form-control" id="ProductSearch" style="font-size: 20px; height: 50px;" placeholder="@PROPageModel.Purchase_pleaseaddproducttoorderlist">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-1">
+                                    <div class="form-group">
+                                        <label class="control-label"></label>
+                                        <button type="button" id="BtnProductSearch" class="btn btn-primary btn-block" style="height: 35px; margin-top: 0px;"><i class="fa fa-search"></i></button>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                                <div class="row" style="padding-top: 30px;">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label>@PROPageModel.Purchases_OrderItems</label>
+                                        </div>
+
+                                        <table id="GrdPurchasedProducts"></table>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="pdt-25">
+                                        <div class="row">
+                                            <div class="col-sm-6" style="display:none">
+                                                <button type="button" id="btnPurchaseReset" class="btn btn-secondary btn-block"><i class="fa fa-undo"></i> @SparePro.Repository.WEBPAGEBUTTON.RESET</button>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <button type="button" id="btnSavePurchases" class="btn btn-primary btn-block"><i class="fa fa-save"></i> Order</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div id="bottom-total" class="well well-sm" style="margin-bottom: 0px; position: static; bottom: 0px; width:100%; z-index: 2;">
+                                    <table class="table table-bordered table-condensed totals" style="margin-bottom:0;">
+                                        <tbody>
+                                            <tr class="TotalView">
+                                                <td>@PROPageModel.Common_GrandTotal <span class="totals_val pull-right" style="font-weight: bold;" id="txtGrandTotal">0.00</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                </div>
+                <!-- /.col-md-12 -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content -->    
+    
+</body>
+
+</html>
+

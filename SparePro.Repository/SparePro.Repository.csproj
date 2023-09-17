@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{57CB428B-00C2-46A5-9D11-7D6F1268058F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SparePro.Repository</RootNamespace>
+    <AssemblyName>SparePro.Repository</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\..\SparePro - Copy\SparePro.Entity\bin\Debug\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\..\SparePro - Copy\SparePro.Entity\bin\Debug\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="IOrderRepository.cs" />
+    <Compile Include="IPurchaseRepository.cs" />
+    <Compile Include="OrderRepository.cs" />
+    <Compile Include="PurchaseRepository.cs" />
+    <Compile Include="Resource\Button.ta.Designer.cs">
+      <DependentUpon>Button.ta.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resource\PROMessage.ta.Designer.cs">
+      <DependentUpon>PROMessage.ta.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resource\PROMessage1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PROMessage.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resource\PROPageModel.ta.Designer.cs">
+      <DependentUpon>PROPageModel.ta.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resource\PROPageModel1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PROPageModel.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resource\PROTitle.ta.Designer.cs">
+      <DependentUpon>PROTitle.ta.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resource\SYSMessage.ta.Designer.cs">
+      <DependentUpon>SYSMessage.ta.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resource\SYSPageModel.ta.Designer.cs">
+      <DependentUpon>SYSPageModel.ta.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resource\SYSTitle.ta.Designer.cs">
+      <DependentUpon>SYSTitle.ta.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CommonRepository.cs" />
+    <Compile Include="ICommonRepository.cs" />
+    <Compile Include="IProjectMasterRepository.cs" />
+    <Compile Include="ISystemMasterRepository.cs" />
+    <Compile Include="ProjectMasterRepository.cs" />
+    <Compile Include="Resource\Button.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Button.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resource\SYSMessage.Designer.cs">
+      <DependentUpon>SYSMessage.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resource\PROTitle.Designer.cs">
+      <DependentUpon>PROTitle.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resource\SYSPageModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SYSPageModel.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resource\SYSTitle1.Designer.cs">
+      <DependentUpon>SYSTitle.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="SystemMasterRepository.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resource\Button.ta.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Button.ta.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\Button.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Button.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\PROMessage.ta.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PROMessage.ta.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\PROMessage.resx">
+      <SubType>Designer</SubType>
+      <LastGenOutput>PROMessage1.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\PROPageModel.ta.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PROPageModel.ta.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\PROPageModel.resx">
+      <SubType>Designer</SubType>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PROPageModel1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\PROTitle.ta.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PROTitle.ta.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\SYSMessage.ta.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SYSMessage.ta.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\SYSPageModel.ta.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SYSPageModel.ta.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\SYSPageModel.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>SYSPageModel.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\SYSMessage.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SYSMessage.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\PROTitle.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PROTitle.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\SYSTitle.ta.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SYSTitle.ta.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\SYSTitle.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SYSTitle1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SparePro.Entity\SparePro.Entity.csproj">
+      <Project>{33882671-806d-4ba4-9d96-fc9f4bddbb72}</Project>
+      <Name>SparePro.Entity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SparePro.Model\SparePro.Model.csproj">
+      <Project>{cade0411-3610-412e-822c-bb7948a069f4}</Project>
+      <Name>Distributor.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

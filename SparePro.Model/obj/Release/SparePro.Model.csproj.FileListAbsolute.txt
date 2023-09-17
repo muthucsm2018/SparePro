@@ -1,0 +1,8 @@
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Model\bin\Release\SparePro.Model.dll
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Model\bin\Release\SparePro.Model.pdb
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Model\bin\Release\System.Web.Mvc.dll
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Model\obj\Release\SparePro.Model.csproj.AssemblyReference.cache
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Model\obj\Release\SparePro.Model.csproj.CoreCompileInputs.cache
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Model\obj\Release\SparePro.Model.csproj.CopyComplete
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Model\obj\Release\SparePro.Model.dll
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Model\obj\Release\SparePro.Model.pdb

@@ -1,0 +1,207 @@
+﻿
+@using SparePro.Repository.Resource;
+
+@{
+    Layout = "";
+}
+ 
+<head>
+    <script src="~/Content/POSStyle/plugins/chart.js/Chart.js"></script>
+    <script src="~/Content/POSStyle/plugins/flot/jquery.flot.js"></script>
+    <script src="~/Content/POSStyle/plugins/flot-old/jquery.flot.resize.js"></script>
+    <script src="~/Content/POSStyle/plugins/flot-old/jquery.flot.pie.js"></script>
+
+    <style type="text/css">
+        .glyphicon {
+            margin-right: 5px;
+        }
+
+        .thumbnail {
+            margin-bottom: 10px;
+            padding: 0px;
+            -webkit-border-radius: 0px;
+            -moz-border-radius: 0px;
+            border-radius: 0px;
+        }
+
+        .item.list-group-item {
+            float: none;
+            width: 100%;
+            background-color: #fff;
+            margin-bottom: 10px;
+        }
+
+            .item.list-group-item:nth-of-type(odd):hover, .item.list-group-item:hover {
+                background: #428bca;
+            }
+
+            .item.list-group-item .list-group-image {
+                margin-right: 10px;
+            }
+
+            .item.list-group-item .thumbnail {
+                margin-bottom: 0px;
+            }
+
+            .item.list-group-item .caption {
+                padding: 3px 3px 0px 3px;
+            }
+
+            .item.list-group-item:nth-of-type(odd) {
+                background: #eeeeee;
+            }
+
+            .item.list-group-item:before, .item.list-group-item:after {
+                display: table;
+                content: " ";
+            }
+
+            .item.list-group-item img {
+                float: left;
+            }
+
+            .item.list-group-item:after {
+                clear: both;
+            }
+
+        .list-group-item-text {
+            margin: 0 0 11px;
+        }
+    </style>
+    <script>
+
+        $("#TxtFromDate").datepicker({
+            format: Common_Date_Format, autoclose: true, uiLibrary: 'bootstrap4', iconsLibrary: 'fontawesome', size: 'small'
+        });
+
+        $("#TxtToDate").datepicker({
+            format: Common_Date_Format, autoclose: true, uiLibrary: 'bootstrap4', iconsLibrary: 'fontawesome', size: 'small'
+        });
+       
+
+        $(document).ready(function () {
+
+
+        });
+
+    </script>
+</head>
+<body>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content">
+        <!-- Content Header (Page header) -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-pd">
+
+                        <div class="card-body">
+                            <div>
+                                
+                                <div class="row">
+                                    
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="control-label">From</label>
+                                            <div>
+                                                <input type="text" id="TxtFromDate" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>To</label>
+                                            <div>
+                                                <input type="text" id="TxtToDate" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="pdt-25">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnItemSearch" class="btn btn-primary btn-block"><i class="fa fa-search"></i> @SparePro.Repository.WEBPAGEBUTTON.SEARCH</button>
+                                                </div>
+                                                <div class="col-sm-6" style="display:none">
+                                                    <button type="button" id="btnItemClear" class="btn btn-primary btn-block"><i class="fa fa-paint-brush"></i> @SparePro.Repository.WEBPAGEBUTTON.CLEAR</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div id="DivProductView"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div><!-- /.content-wrapper -->
+        </div>
+    </div>
+
+    <script>
+    function ProductLoad() {
+
+        $('#DivProductView').html("");
+
+        function htmlDecode(input) {
+            const textArea = document.createElement("textarea");
+            textArea.innerHTML = input;
+            return textArea.value;
+        }
+        function htmlEncode(input) {
+            const textArea = document.createElement("textarea");
+            textArea.innerText = input;
+            return textArea.innerHTML.split("<br>").join("\n");
+        }
+
+
+        $.ajax({
+            type: "GET",
+            data: { RequestedBy: 1, fromDate: $('#TxtFromDate').val(), toDate: $('#TxtToDate').val() },
+            url: '@Url.Action("UserOrder_FindAll", "Reports")',
+            success: function (Datas) {
+                var Product = '<div class="row">';
+
+                $.each(Datas.records, function (i, Data) {
+                    if (Data.Items) {
+                        ItemsList = htmlDecode(Data.Items);
+                    }
+                    else {
+                        ItemsList = '';
+                    }
+
+                    Product += '<div class="col-sm-3" style="border:0.5px solid">' + '<p style="font-size:0.9rem;font-weight:bold">' + Data.CreatedDate + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label style="color:blue">' + Data.TotalAmount + '</label></p>';
+                    Product += '<div class="row"><div class="col-sm-12"><p class="badge badge-success" style="text-align:left;font-size:0.5rem;word-break: break-all;white-space: normal;" >' + ItemsList + '</p>';
+                    Product += '</div></div></div>'; 
+
+                });
+                Product += "</div>";
+               
+                document.getElementById("DivProductView").innerHTML += Product;
+                //$('#DivProductView').innerHTML += Product;
+
+            }
+        });
+    }
+
+    //Search filter methods
+        $('#btnItemSearch').click(function () {
+        ProductLoad();
+    });
+   
+    </script>
+
+</body>
+
+    

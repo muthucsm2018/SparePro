@@ -1,0 +1,10 @@
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Entity\bin\Release\SparePro.Entity.dll.config
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Entity\bin\Release\SparePro.Entity.dll
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Entity\bin\Release\SparePro.Entity.pdb
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Entity\bin\Release\EntityFramework.dll
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Entity\bin\Release\EntityFramework.SqlServer.dll
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Entity\obj\Release\SparePro.Entity.csproj.AssemblyReference.cache
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Entity\obj\Release\SparePro.Entity.csproj.CoreCompileInputs.cache
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Entity\obj\Release\SparePro.Entity.csproj.CopyComplete
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Entity\obj\Release\SparePro.Entity.dll
+C:\Users\P0105443\Documents\repos\SparePro\SparePro.Entity\obj\Release\SparePro.Entity.pdb

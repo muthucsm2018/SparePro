@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{33882671-806D-4BA4-9D96-FC9F4BDDBB72}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SparePro.Entity</RootNamespace>
+    <AssemblyName>SparePro.Entity</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\..\SparePro - Copy\SparePro.Entity\bin\Debug\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\..\SparePro - Copy\SparePro.Entity\bin\Debug\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpareProDBModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SpareProDBModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SpareProDBModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SpareProDBModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SpareProDBModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="sp_frm_getPurchases_Result.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_frm_getSales_Result.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_frm_get_Monthly_Sales_Report_Result.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_frm_get_Order_Report_Result.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_frm_get_Payment_Report_Result.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_frm_get_Stock_Report_Result.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblAccPaymentDetail.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblBrandMaster.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblDefaultMasterDetail.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblDefaultMasterHeader.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblHomePage.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblItemMaster.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblMenuMasterDetail.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblMenuMasterHeader.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblMenuRoleMatrixAccess.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblOrder.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblOrderDetail.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblPartMaster.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblPaymentDetail.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblPurchas.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblPurchaseDetail.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblRoleMaster.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblStock.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TblUserMaster.cs">
+      <DependentUpon>SpareProDBModel.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+    <EntityDeploy Include="SpareProDBModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>SpareProDBModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="SpareProDBModel.edmx.diagram">
+      <DependentUpon>SpareProDBModel.edmx</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SpareProDBModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>SpareProDBModel.edmx</DependentUpon>
+      <LastGenOutput>SpareProDBModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="SpareProDBModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>SpareProDBModel.edmx</DependentUpon>
+      <LastGenOutput>SpareProDBModel.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,271 @@
+﻿@using SparePro.Repository.Resource;
+@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        ShowCommonBack();
+        var GrdPartMaster;
+        var PartStatus;
+       
+        LoadStatus(0);
+       
+
+        function LoadStatus(PartStatus) {
+
+            $.ajax({
+                type: "GET",
+                url: BaseURL + "Common/Load_Status",
+                datatype: "Json",
+                success: function (data) {
+                    $("#DdlsearchPartStatus option").remove();
+                    $.each(data, function (index, value) {
+                        $('#DdlsearchPartStatus').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            }).done(function (result) {
+                if (PartStatus == 0 || PartStatus == 1) {
+                    $("#DdlsearchPartStatus").val(PartStatus);
+                }
+                else {
+                    $("#DdlsearchPartStatus").val(-1);
+                }
+            });
+        }
+
+        renderer = function (value, record, $cell, $displayEl, id) {
+
+            var HTMLContent = '<table style=width:100%><tr>';
+                HTMLContent += '<td style="border:0px solid #FFF;"><a tabindex="-1" onclick="EditPart(' + id + ')" style="cursor:pointer"><i class="fas fa-edit Form-GridEditButton"></i></a></td>';
+                HTMLContent += '<td style="border:0px solid #FFF;"><a tabindex="-1" onclick="DeletePart(' + id + ')" style="cursor:pointer"><i class="far fa-trash-alt Form-GridDeleteButton"></i></a></td>';
+            $displayEl.html("</tr></table>");
+            $displayEl.append(HTMLContent);
+
+        }
+        var tstamp = (new Date()).getTime();
+
+         GrdPartMaster = $("#GrdPartMaster").grid({
+            primaryKey: "PartID",
+            uiLibrary: "bootstrap4",
+            autoLoad: true,
+            dataSource: '@Url.Action("PartMaster_FindAll", "ProjectMaster")',
+            columns: [
+                   
+                    { field: "PartName", title: "Part Name", sortable: true },
+                    { field: "SortOrder", title: "Sort Order", sortable: true },
+                    { field: '@PROPageModel.Common_Status', width: 75, align: "center", editor: false, sortable: true, renderer: function (value, record) { return record.Status == true ? '<span class="badge badge-success" style=font-size:12px>@Button.Button_Active</span>' : '<span class="badge badge-danger" style=font-size:12px>@Button.Button_Inactive</span>'; } },
+                    { field: '@Button.Button_Action', width: 90, align: "center", renderer: renderer }
+            ]//,
+            //pager: { enable: true, limit: GridRowsDisplayLimit, sizes: ArrPaging }
+         });
+
+        $('#btnAddPartDetail').click(function () {
+            var ParamData = [
+
+                { ParameterName: "PartName", ParameterValue: $("#TxtSearchPartName").val() },
+                { ParameterName: "PartStatus", ParameterValue: $("#DdlsearchPartStatus").val() }
+
+            ]
+
+            AddBackURLStore(JSON.stringify(ParamData));
+            if ($("#HdnDashboardCount").val() == 1) {
+                GetMenu('@Url.Action("AddPartMaster", "ProjectMaster")' + '?PartID=0');
+            }
+            else {
+                GetMenu('@Url.Action("AddPartMaster", "ProjectMaster")' + '?PartID=0' + '&HeaderViewID=' + GetParamValue("HeaderViewID") + '&DetailViewID=' + GetParamValue("DetailViewID"));
+            }
+        });
+
+        function EditPart(PartID) {
+            var ParamData = [
+
+                { ParameterName: "PartName", ParameterValue: $("#TxtSearchPartName").val() },
+                { ParameterName: "PartStatus", ParameterValue: $("#DdlsearchPartStatus").val() }
+
+            ]
+
+            AddBackURLStore(JSON.stringify(ParamData));
+            if ($("#HdnDashboardCount").val() == 1) {
+                GetMenu('@Url.Action("AddPartMaster", "ProjectMaster")' + '?PartID=' + PartID);
+            }
+            else {
+
+                GetMenu('@Url.Action("AddPartMaster", "ProjectMaster")' + '?PartID=' + PartID + '&HeaderViewID=' + GetParamValue("HeaderViewID") + '&DetailViewID=' + GetParamValue("DetailViewID"));
+            }
+        }
+
+        function DeletePart(PartID) {
+
+                $.confirm({
+                    title: ConfirmAlert_SuccessMessage,
+                    content: ConfirmAlert_Message_Content.replace("{0}", ConfirmAlert_InactivateMessage_Content),
+                    animation: 'zoom',
+                    closeAnimation: 'zoom',
+                    buttons: {
+                        'confirm': {
+                            text: Alert_YesMessage,
+                            btnClass: Alert_Button_Style,
+                            action: function () {
+                                $.ajax({ url: BaseURL + "ProjectMaster/PartMaster_Delete", type: "POST", data: { PartID: PartID } })
+                                    .done(function (result) {
+                                        if (result.Result == true) {
+                                            GrdPartMaster.reload();
+                                            SucessAlert(result.Message);
+                                        }
+                                        else {
+                                            ErrorAlert(result.Message);
+                                        }
+                                    })
+                                    .fail(function () {
+                                        ErrorAlert(result.Message);
+                                    });
+                            }
+                        },
+                        cancel: {
+                            text: Alert_NoMessage,
+                            btnClass: Alert_Button_Style
+                        }
+                    }
+                });
+         }
+
+
+
+        //Search filter methods
+        $("#btnPartSearch").click(function () {
+            var searchPartName = '';
+           
+            var PartStatus = null;
+
+            searchPartName = $('#TxtSearchPartName').val();          
+
+            if ($("#DdlsearchPartStatus").val() == 0) {
+                PartStatus = false;
+            }
+            else if ($("#DdlsearchPartStatus").val() == 1) {
+                PartStatus = true;
+            }
+
+            GrdPartMaster.reload({ PartName: searchPartName, Status: PartStatus });
+
+
+        });
+
+        $("#btnPartSearchClear").click(function () {
+           
+            $("#TxtSearchPartName").val("");
+            $("#DdlsearchPartStatus").val(-1);
+            GrdPartMaster.reload({ PartName: '', Status: null });
+        });
+
+
+    </script>
+
+</head>
+<body>
+    <input type="hidden" id="HtnPartUniqID" value="0" />
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content">
+        <!-- Content Header (Page header) -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-pd">
+
+                        <div class="card-header">
+                            <span style="font-size: 18px;" class="m-0"><i class="fa fa-cubes"></i></span>
+                            <span style="font-size: 18px; border-left: 1px solid #ccc; padding-left: 10px;"> Part Master  </span>
+                            <div style="float: right;">
+                                <span style="border-left: 1px solid #ccc; padding-left: 15px; padding-right: 15px;">
+                                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="Add Part" id="btnAddPartDetail"><i class="fas fa-plus-circle"></i> </a>
+                                </span>
+                                <span style="border-left: 1px solid #ccc; padding-left: 15px; padding-right: 15px;">
+                                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="Show Form" onclick="showForm()"><i class="fas fa-caret-square-down"></i></a>
+                                </span><span style="border-left: 1px solid #ccc; padding-left: 15px; padding-right: 15px;">
+                                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="Hide Form" onclick="hideForm()"><i class="fas fa-caret-square-up"></i></a>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- /hidden_div -->
+                            <div id="hidden-form" style="display: none;">
+                                <div class="row">
+                                   
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Part Name</label>
+                                            <div>
+                                                <input type="text" tabindex="2" id="TxtSearchPartName"   maxlength="200"  class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>Status</label>
+                                            <div>
+                                                @Html.DropDownList("DdlsearchPartStatus", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 3, @width = "100%" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="pdt-25">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnPartSearch" class="btn btn-primary btn-block"><i class="fa fa-search"></i> @SparePro.Repository.WEBPAGEBUTTON.SEARCH</button>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnPartSearchClear" class="btn btn-primary btn-block"><i class="fa fa-paint-brush"></i> @SparePro.Repository.WEBPAGEBUTTON.CLEAR</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="box-body table-responsive no-padding">
+                                        <table id="GrdPartMaster" class="table table-hover"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div><!-- /.content-wrapper -->
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        if (ArrParameterData[GetBackURLCount()] != null) {
+
+            var vPartStatus;
+            if (ArrParameterData[GetBackURLCount()][0].ParameterName == "PartName") {
+                $('#TxtSearchPartName').val(ArrParameterData[0][0].ParameterValue);
+            }
+            if (ArrParameterData[GetBackURLCount()][1].ParameterName == "PartStatus") {
+                SupplierUserStatus = ArrParameterData[0][1].ParameterValue;
+                $('#DdlsearchPartStatus').val(SupplierUserStatus);
+                if (PartStatus == 0) {
+                    vPartStatus = false;
+                }
+                else if (PartStatus == 1) {
+                    vPartStatus = true;
+                }
+            }
+            GrdPartMaster.reload({ PartName: $('#TxtSearchPartName').val(), Status: vPartStatus });
+        }
+
+
+    </script>
+
+</body>
+</html>
+

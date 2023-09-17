@@ -1,0 +1,215 @@
+﻿@using SparePro.Repository.Resource;
+
+
+@{
+    ViewBag.Title = "ADD PART";
+    Layout = "";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+
+    <script>
+
+        ShowCommonBack();
+        //Handling Focus on load and Submit On Enter
+        EditPart();
+
+        $('#btnPartSave').click(function (e) {
+            if ($(this).hasClass("unclickable")) {
+                e.preventDefault();
+            } else {
+                var _errorMsg = "";
+              
+                if ($("#TxtPartName").val() == "") {
+                    _errorMsg += '<br />' + "Please Enter Part Name";
+                }
+                if ($("#TxtSortOrder").val() == "") {
+                    _errorMsg += '<br />' + "Please Enter Sort Order";
+                }
+
+                if (_errorMsg.length > 0) {
+                    ErrorAlert(_errorMsg);
+                    return false;
+                }
+
+                $.confirm({
+                    title: ConfirmAlert_SuccessMessage,
+                    content: GetParamValue("PartID") == 0 ? ConfirmAlert_Message_Content.replace("{0}", ConfirmAlert_SaveMessage_Content) : ConfirmAlert_Message_Content.replace("{0}", ConfirmAlert_UpdateMessage_Content),
+                    animation: 'zoom',
+                    closeAnimation: 'zoom',
+                    buttons: {
+                        'confirm': {
+                            text: Alert_YesMessage,
+                            btnClass: Alert_Button_Style,
+                            keys: ['enter'],
+                            action: function () {
+
+                                var fileData = new FormData();
+                                
+                                fileData.append("PartID", GetParamValue("PartID"));
+                                fileData.append("PartName", $("#TxtPartName").val());
+                                fileData.append("SortOrder", $("#TxtSortOrder").val());
+                                fileData.append("Status", $("#PartStatus").is(":checked"));
+                                $.ajax({
+                                    url: BaseURL + "ProjectMaster/PartMaster_Save", type: "POST",
+                                    contentType: false, // Not to set any content header
+                                    processData: false,
+                                    data: fileData
+                                }).done(function (result) {
+                                    if (result.Result == true) {
+                                        SucessAlert(result.Message);
+                                        PartClear();
+                                        BackFunction();
+                                    }
+                                    else if (result.Result == false) {
+                                        ErrorAlert(result.Message);
+                                    }
+                                })
+                                    .fail(function () {
+                                        ErrorAlert(result.Message);
+                                    });
+                            }
+                        },
+                        cancel: {
+                            text: Alert_NoMessage,
+                            btnClass: Alert_Button_Style
+                        }
+                    }
+                });
+
+            }
+        });
+
+        function PartClear() {
+            $('#TxtPartName').val("");            
+            $('#TxtSortOrder').val("");
+            $('#PartStatus').prop('checked', true);
+        }
+
+        $("#btnPartReset").click(function (e) {
+            if ($(this).hasClass("unclickable")) {
+                e.preventDefault();
+            } else {
+
+                $(this).addClass("unclickable");
+                ResetPart();
+            }
+        });
+
+        function ResetPart() {
+            if (GetParamValue("PartID") != 0) {
+                EditPart();
+            }
+            else {
+                PartClear();
+            }
+        }
+
+        function EditPart() {
+
+            if (GetParamValue("PartID") != 0) {
+                $.ajax({
+                    type: "GET",
+                    url: BaseURL + "ProjectMaster/PartMaster_Edit",
+                    data: { PartID: GetParamValue("PartID") },
+                    datatype: "Json",
+                    success: function (data) {
+                        $("#TxtPartName").val(data.PartName);
+                        $("#TxtSortOrder").val(data.SortOrder);
+                        if (data.Status) {
+                            $('#PartStatus').prop('checked', true);
+                        }
+                        else {
+                            $('#PartStatus').prop('checked', false);
+                        }
+                    }
+                });
+            }
+            else {
+                $('#PartStatus').prop('checked', true);
+            }
+        }
+
+
+    </script>
+</head>
+<body>
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+
+                <!-- /.col-md-12 -->
+                <div class="col-lg-12">
+                    <div class="card card-pd">
+                        <div class="card-header">
+                            <span style="font-size: 18px;" class="m-0"><i class="fas fa-shopping-basket"></i></span>
+                            <span style="font-size: 18px; border-left: 1px solid #ccc; padding-left: 10px;"> Part Master - [Add/Edit] </span>
+                        </div>
+                        <div class="card-body">
+
+                            <p class="introtext">@SYSPageModel.Common_Hint</p>
+
+                            <div class="row">
+                            <div class="col-sm-5">
+
+                                   <div class="form-group required">
+                                        <label class="control-label">Part Name</label>
+                                       <input type="text" class="form-control" id="TxtPartName" placeholder="Part Name">
+                                   </div>
+                                
+
+                                <div class="pdt-25">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group clearfix">
+                                                <div class="icheck-primary">
+                                                    @Html.CheckBox("PartStatus")
+                                                    <label for="PartStatus">
+                                                        @PROPageModel.CustomerMaster_Status
+                                                    </label>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                    
+                                    </div>
+                            <div class="col-sm-2">
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="form-group required">
+                                    <label class="control-label">Order By</label>
+                                    <input type="number" id="TxtSortOrder"  placeholder="@PROPageModel.ToolTip_OrderBy" class="form-control" min="0" onkeyup="if(this.value<0){this.value= this.value * -1}">
+                                </div> 
+                               
+                                <div class="form-group">
+                                    <div class="pdt-30">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <button type="button" id="btnPartReset" class="btn btn-secondary btn-block"><i class="fa fa-undo"></i> @SparePro.Repository.WEBPAGEBUTTON.RESET</button>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <button type="button" id="btnPartSave" class="btn btn-primary btn-block"><i class="fa fa-save"></i> @SparePro.Repository.WEBPAGEBUTTON.SAVE</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                  </div>
+                <!-- /.col-md-12 -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+      </div>
+       <!-- /.content -->
+    </div>
+
+        </body>
+</html>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="69666e95ff744d32a0ca554187d75348" Name="Diagram1">
+        <EntityTypeShape EntityType="SpareProModel.TblBrandMaster" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblDefaultMasterDetail" Width="1.5" PointX="2.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblDefaultMasterHeader" Width="1.5" PointX="4.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblHomePage" Width="1.5" PointX="4.75" PointY="4.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblMenuMasterDetail" Width="1.5" PointX="0.75" PointY="5.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblMenuMasterHeader" Width="1.5" PointX="6.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblRoleMaster" Width="1.5" PointX="6.75" PointY="4.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblUserMaster" Width="1.5" PointX="8.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblMenuRoleMatrixAccess" Width="1.5" PointX="3.375" PointY="8.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblItemMaster" Width="1.5" PointX="5.375" PointY="8.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblPartMaster" Width="1.5" PointX="7.375" PointY="8.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblPaymentDetail" Width="1.5" PointX="0.75" PointY="10.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblStock" Width="1.5" PointX="11.75" PointY="8.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblPurchaseDetail" Width="1.5" PointX="11.375" PointY="0.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblPurchas" Width="1.5" PointX="7.375" PointY="12.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblOrderDetail" Width="1.5" PointX="9.375" PointY="11.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblOrder" Width="1.5" PointX="11.375" PointY="11.75" />
+        <EntityTypeShape EntityType="SpareProModel.TblAccPaymentDetail" Width="1.5" PointX="9.375" PointY="5.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

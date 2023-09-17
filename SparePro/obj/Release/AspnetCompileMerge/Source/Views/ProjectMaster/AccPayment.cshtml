@@ -1,0 +1,440 @@
+﻿
+@using SparePro.Repository.Resource;
+
+@{
+    Layout = "";
+}
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+
+    <script>
+        var GrdItem, ItemStatus = -1;
+
+        ShowCommonBack();
+
+        $('body').on('click', function (e) {
+            if ($(e.target).data('toggle') !== 'popover' && $(e.target).parents('.popover.in').length === 0) {
+                $('.popover').popover('hide');
+            }
+        });
+
+        document.onkeydown = function (evt) {
+            var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
+            if (keyCode == 13) {
+                SubCategorySearch();
+                return false;
+            }
+        }
+
+        $.ajax({
+            type: "GET",
+            url: BaseURL + "Common/Load_SystemUserDetail",
+            datatype: "Json",
+            success: function (data) {
+                $("#DdlRequestedBy option").remove();
+                $.each(data, function (index, value) {
+                    $('#DdlRequestedBy').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: BaseURL + "Common/Load_SystemUserDetail",
+            datatype: "Json",
+            success: function (data) {
+                $("#DdlPaidBy option").remove();
+                $.each(data, function (index, value) {
+                    $('#DdlPaidBy').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        });
+
+        $('#txtPaymentDate').datepicker({
+            format: Common_Date_Format, autoclose: true, uiLibrary: 'bootstrap4', iconsLibrary: 'fontawesome', size: 'small', todayHighlight: true
+        });
+
+        $('input[id="txtPaymentDate"]').val(TodayDateRange);
+
+        function TodayDateRange() {
+            let monthNames = ["Jan", "Feb", "Mar", "Apr",
+                "May", "Jun", "Jul", "Aug",
+                "Sep", "Oct", "Nov", "Dec"];
+
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth(); //January is 0!
+            var yyyy = today.getFullYear();
+
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+
+            let monthName = monthNames[mm];
+
+            return dd + '-' + monthName + '-' + yyyy;
+        }
+
+         $.ajax({
+            type: "GET",
+            url: BaseURL + "Common/Load_DefaultType",
+            datatype: "Json",
+            data: { DefaultType: "@SparePro.Repository.DEFAULTMASTER.DefaultHeaderMaster_PaymentMode_ViewID" },
+            success: function (data) {
+                $("#DdlPaymentStatus option").remove();
+                $.each(data, function (index, value) {
+                    $('#DdlPaymentStatus').append('<option value="' + value.DefaultID + '">' + value.DefaultName + '</option>');
+                });
+            }
+        }).done(function (result) {
+            $("#DdlPaymentStatus").val("@SparePro.Repository.DEFAULTMASTER.DefaultDetailMaster_PaymentModeCash_ViewID");
+        });
+
+        renderer = function (value, record, $cell, $displayEl, id) {          
+
+            var HTMLContent = '<table style=width:100%><tr>';
+            HTMLContent += '<td style="border:0px solid #FFF;"><a tabindex="-1" onclick="DeleteItem(' + record.AccPaymentID + ')" style="cursor:pointer"><i class="far fa-trash-alt Form-GridDeleteButton"></i></a></td>';
+            $displayEl.html("</tr></table>");
+            $displayEl.append(HTMLContent);
+
+        }
+
+        GrdItem = $("#GrdItem").grid({
+            primaryKey: "ItemID",
+            uiLibrary: "bootstrap4",
+            autoLoad: true,
+            dataSource: '@Url.Action("AccPayment_FindAll", "ProjectMaster")',
+            columns: [
+                { field: "PaidByName", width: 70, title: "User Name", sortable: true, align: "left" },
+                { field: "PaidAmount", width: 40, title: "Paid Amount", sortable: true, align: "left" },
+                { field: "PaymentBy", width: 70, title: "Payment By", sortable: true, align: "left" },
+                { field: "DisplayPaymentDate", width: 35, title: "Payment Date", sortable: true, align: "left" },
+                { field: '@Button.Button_Action', width: 40, align: "center", renderer: renderer }
+
+        ],
+            pager: { enable: true, limit: GridRowsDisplayLimit, sizes: ArrPaging }
+        });
+
+        function DeleteItem(ItemID) {
+                $.confirm({
+                    title: ConfirmAlert_SuccessMessage,
+                    content: ConfirmAlert_Message_Content.replace("{0}", ConfirmAlert_InactivateMessage_Content),
+                    animation: 'zoom',
+                    closeAnimation: 'zoom',
+                    buttons: {
+                        'confirm': {
+                            text: Alert_YesMessage,
+                            btnClass: Alert_Button_Style,
+                            action: function () {
+                                $.ajax({ url: BaseURL + "ProjectMaster/AccPayment_Delete", type: "POST", data: { ItemID: ItemID } })
+                                    .done(function (result) {
+                                        if (result.Result == true) {
+                                            GrdItem.reload();
+                                            $.ajax({
+                                                type: "GET",
+                                                url: BaseURL + "ProjectMaster/AccPayment_Get",
+                                                datatype: "Json",
+                                                data: { PaidBy: $('#DdlPaidBy').val() },
+                                                success: function (data) {
+
+                                                    var totamt, paidamt, balamt = 0;
+                                                    if (data.record) { totamt = parseFloat(data.record.TotalAmount); } else { totamt = 0; }
+                                                    if (data.record) { paidamt = parseFloat(data.record.PaidAmount); } else { paidamt = 0; }
+
+                                                    balamt = totamt - paidamt;
+                                                    $("#txtGrandTotal").text(totamt);
+                                                    $("#txtPaidTotal").text(paidamt);
+                                                    $("#txtBalanceTotal").text(parseFloat(balamt).toFixed(2));
+                                                }
+                                            }).done(function (result) {
+
+                                            });
+                                            SucessAlert(result.Message);
+                                        }
+                                        else {
+                                            ErrorAlert(result.Message);
+                                        }
+                                    })
+                                    .fail(function (result) {
+                                        ErrorAlert(result.Message);
+                                    });
+                            }
+                        },
+                        cancel: {
+                            text: Alert_NoMessage,
+                            btnClass: Alert_Button_Style
+                        }
+                    }
+                });
+            }
+
+        function ItemSearch() {
+            var searchPaidBy = '';
+
+            if ($("#DdlRequestedBy").val() != "") {
+                searchPaidBy = $('#DdlRequestedBy').val();
+            }
+
+            GrdItem.clear();
+            GrdItem.reload({ PaidBy: searchPaidBy });
+
+            $.ajax({
+                type: "GET",
+                url: BaseURL + "ProjectMaster/AccPayment_Get",
+                datatype: "Json",
+                data: { PaidBy: searchPaidBy },
+                success: function (data) {
+                    
+                    var totamt, paidamt, balamt = 0;
+                    if (data.record) { totamt = parseFloat(data.record.TotalAmount); } else { totamt = 0; }
+                    if (data.record) { paidamt = parseFloat(data.record.PaidAmount); } else { paidamt = 0; }
+
+                    balamt = totamt - paidamt;
+                    $("#txtGrandTotal").text(totamt);
+                    $("#txtPaidTotal").text(paidamt);
+                    $("#txtBalanceTotal").text(parseFloat(balamt).toFixed(2));
+                }
+            }).done(function (result) {
+
+            });
+
+        }
+
+        //Search filter methods
+        $('#btnPaymentSearch').click(function () {
+            ItemSearch();
+        });
+
+        $('#btnPaymentSearchClear').click(function () {
+            $("#DdlRequestedBy").val("");
+
+            GrdItem.reload({ PaidBy: true });
+        });
+
+        function FormValidate() {
+            var Result = true;
+
+            if ($("#DdlPaidBy").val() == 0) {
+                ErrorAlert("Please Select User Name");
+                Result = false;
+                return false
+            }
+
+            if ($("#DdlPaymentStatus").val() == "" || $("#DdlPaymentStatus").val() == null) {
+                ErrorAlert("Please Select Payment By");
+                Result = false;
+                return false
+            }
+            if ($("#txtPaymentDate").val() == "" || $("#txtPaymentDate").val() == null) {
+                ErrorAlert("Please enter the Payment Date");
+                return false
+            }
+            else if ($("#txtPaymentAmount").val() == "" || $("#txtPaymentAmount").val() == null) {
+                ErrorAlert("Please enter the Payment Amount");
+                return false
+            }
+
+            return Result;
+        }
+
+        $("#btnPaymentReset").click(function () {
+            if ($(this).hasClass("unclickable")) {
+                e.preventDefault();
+            } else {
+                $(this).addClass("unclickable");
+                clearPayments();
+            }
+        });
+
+        function clearPayments (){
+            $('#DdlPaidBy').val(0);
+            $('#DdlPaymentStatus').val(0);
+            $('#txtPaymentDate').text(0);
+            $('#txtPaymentAmount').val(0);
+        }
+
+        $('#btnSavePayments').click(function (e) {
+            if ($(this).hasClass("unclickable")) {
+                e.preventDefault();
+            } else {
+
+                if (FormValidate() == true) {
+
+                        var fileData = new FormData();
+
+                        fileData.append("PaymentBy", $('#DdlPaymentStatus').val());
+                        fileData.append("PaidBy", $('#DdlPaidBy').val());
+                        fileData.append("PaymentDate", $("#txtPaymentDate").val());
+                        fileData.append("PaidAmount", $("#txtPaymentAmount").val());
+
+                        $.ajax({
+                            url: BaseURL + "ProjectMaster/AccPayment_Save", type: "POST",
+                            contentType: false, // Not to set any content header
+                            processData: false,
+                            data: fileData
+
+                        }).done(function (result) {
+                            if (result.Result == true) {
+                                SucessAlert(result.Message);
+                                clearPayments();
+                                ItemSearch();
+                            }
+                            else if (result.Result == false) {
+                                ErrorAlert(result.Message);
+                            }
+                        })
+                            .fail(function (result) {
+                                ErrorAlert(result.Message);
+                            });
+
+                }
+            }
+        });
+
+    </script>
+    
+</head>
+<body>
+    
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content">
+        <!-- Content Header (Page header) -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-pd">
+
+                        <div class="card-body">
+                            <div>
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>User Name</label>
+                                            <div>
+                                                @Html.DropDownList("DdlRequestedBy", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 1, @width = "100%" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                   
+
+                                    <div class="col-sm-4">
+                                        <div class="pdt-25">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnPaymentSearch" class="btn btn-primary btn-block"><i class="fa fa-search"></i> @SparePro.Repository.WEBPAGEBUTTON.SEARCH</button>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <button type="button" id="btnPaymentSearchClear" class="btn btn-primary btn-block"><i class="fa fa-paint-brush"></i> @SparePro.Repository.WEBPAGEBUTTON.CLEAR</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div id="bottom-total" class="well well-sm" style="margin-bottom: 0px; position: static; bottom: 0px; width:100%; z-index: 2;">
+                                <table class="table table-bordered table-condensed totals" style="margin-bottom:0;">
+                                    <tbody>
+                                        <tr class="TotalView">
+                                            <td>Total Amount <span class="totals_val pull-right" style="font-weight: bold;" id="txtGrandTotal">0.00</span></td>
+                                       
+                                            <td>Paid Amount <span class="totals_val pull-right" style="font-weight: bold;" id="txtPaidTotal">0.00</span></td>
+                                       
+                                            <td>Balance Amount <span class="totals_val pull-right" style="font-weight: bold;" id="txtBalanceTotal">0.00</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="card card-pd">
+
+                        <div class="card-header">
+                            <span style="font-size: 18px;" class="m-0"><i class="fas fa-box"></i></span>
+                            <span style="font-size: 18px; border-left: 1px solid #ccc; padding-left: 10px;"> Account Payments </span>
+                            <div style="float: right;">
+
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div id="hidden-form">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>User Name</label>
+                                            <div>
+                                                @Html.DropDownList("DdlPaidBy", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 1, @width = "100%" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label>Payment By</label>
+                                                @Html.DropDownList("DdlPaymentStatus", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control select2", @tabindex = 1, @width = "100%" })
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label>Payment Date</label>
+                                                <input type="text" autocomplete="off" class="form-control" id="txtPaymentDate" name="txtPaymentDate">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <label>Payment Amount</label>
+                                                <div>
+                                                    <input type="number" class="form-control" id="txtPaymentAmount" min="0" onkeyup="if(this.value<0){this.value =this.value * -1}" maxlength="10">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="pdt-25">
+                                                <div class="row">
+                                                    <div class="col-sm-6" ">
+                                                        <button type="button" id="btnPaymentReset" class="btn btn-secondary btn-block"><i class="fa fa-undo"></i> @SparePro.Repository.WEBPAGEBUTTON.RESET</button>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <button type="button" id="btnSavePayments" class="btn btn-primary btn-block"><i class="fa fa-save"></i> Save</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            <br>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="box-body table-responsive no-padding">
+                                        <table id="GrdItem" class="table table-hover"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>        
+
+            </div><!-- /.content-wrapper -->
+        </div>
+    </div>
+    
+
+</body>
+</html>
+
+
+
+
+
